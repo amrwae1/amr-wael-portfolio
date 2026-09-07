@@ -21,7 +21,16 @@ const interface_ = Public_Sans({
 const description =
   "Product design work built on inspectable evidence. Valora, a B2B performance-intelligence concept, plus independent redesign studies for Noon and Booking.com.";
 
+/**
+ * Pinned so the social card and canonical URL always resolve to the production
+ * domain. Without it Next falls back to VERCEL_URL, which is per-deployment and
+ * changes on every push — a shared link would point at a stale build.
+ */
+const siteUrl = "https://amr-wael.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  alternates: { canonical: "/" },
   title: "Amr Wael — Product design around business outcomes",
   description,
   authors: [{ name: "Amr Wael" }],
