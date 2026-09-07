@@ -1,0 +1,306 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Dark Modern Archivist — design tokens
+   Roles are documented in DESIGN.md. Values were tuned against the real
+   Valora captures, which are light interfaces sitting on a warm dark canvas.
+   ========================================================================== */
+
+@theme {
+  /* Ground and surfaces ---------------------------------------------------- */
+  --color-canvas: #11110f;
+  --color-surface-1: #181815;
+  --color-surface-2: #20201c;
+  --color-surface-3: #282721;
+
+  /* Text ------------------------------------------------------------------- */
+  --color-text-strong: #f1eadf;
+  --color-text: #d3ccc0;
+  --color-text-muted: #9f988c;
+
+  /* Structure -------------------------------------------------------------- */
+  --color-rule: #37352f;
+
+  /* Action and semantics --------------------------------------------------- */
+  --color-accent: #8493c8;
+  --color-accent-strong: #a8b5e6;
+  --color-reasoning: #9790b8;
+  --color-intended: #b89a63;
+  --color-boundary: #bd897c;
+  --color-focus: #c8d2ff;
+
+  /* Families --------------------------------------------------------------- */
+  --font-serif: var(--font-editorial), ui-serif, Georgia, serif;
+  --font-sans: var(--font-interface), ui-sans-serif, system-ui, sans-serif;
+
+  /* Type scale ------------------------------------------------------------- */
+  --text-meta: clamp(0.78rem, 0.75rem + 0.12vw, 0.86rem);
+  --text-body: clamp(1rem, 0.96rem + 0.18vw, 1.125rem);
+  --text-lead: clamp(1.2rem, 1.08rem + 0.55vw, 1.55rem);
+  --text-title: clamp(1.6rem, 1.35rem + 1.05vw, 2.25rem);
+  --text-chapter: clamp(2.2rem, 1.65rem + 2.2vw, 3.75rem);
+  /* Sits between chapter and title so the flagship stays visibly senior to the
+     large secondary project, which in turn stays senior to the medium one. */
+  --text-project: clamp(1.9rem, 1.4rem + 1.75vw, 3rem);
+  --text-hero: clamp(2rem, 1.35rem + 2.4vw, 3.75rem);
+
+  /* Rhythm ----------------------------------------------------------------- */
+  --spacing-gutter: 1.5rem;
+  --spacing-margin: clamp(1.5rem, 5vw, 4.5rem);
+  --spacing-chapter: clamp(4rem, 9vw, 10rem);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* The sticky header is 4rem tall; keep anchor targets clear of it. */
+    scroll-padding-top: 5.5rem;
+    background-color: var(--color-canvas);
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    /* Guard against any single element forcing a horizontal scrollbar. */
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    color: var(--color-text-strong);
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* One focus treatment for the whole page, visible on every surface. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: #10101a;
+  }
+}
+
+/* ==========================================================================
+   Composition primitives
+   ========================================================================== */
+
+@layer components {
+  /* The measure used by every chapter. */
+  .shell {
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: var(--spacing-margin);
+  }
+
+  /* 4 / 8 / 12 columns. */
+  .grid-12 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 1rem;
+    row-gap: 2.5rem;
+  }
+
+  @media (min-width: 48rem) {
+    .grid-12 {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      column-gap: var(--spacing-gutter);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .grid-12 {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+  }
+
+  /* Readable prose measures. */
+  .measure {
+    max-width: 62ch;
+  }
+
+  .measure-tight {
+    max-width: 46ch;
+  }
+
+  /* --- The evidence plate ------------------------------------------------
+     The Valora captures are light interfaces. Dropped straight onto a
+     near-black canvas they glare and read as floating screenshots. The plate
+     puts a warm mat between canvas and capture so each screen reads as an
+     inspected archive plate. No drop shadow. */
+  .plate {
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-rule);
+    border-radius: 12px;
+    padding: clamp(0.5rem, 1.4vw, 1rem);
+  }
+
+  .plate-media {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    /* A hairline stops the white capture bleeding into the warm mat. */
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  }
+
+  /* The hero plate swaps crops at 768px (see hero-evidence.tsx), so its
+     aspect ratio is pinned per breakpoint. Without this the desktop <source>
+     has no intrinsic size to reserve and the plate would jump on decode. */
+  .plate-media-hero {
+    aspect-ratio: 700 / 650;
+    object-fit: cover;
+  }
+
+  @media (min-width: 48rem) {
+    .plate-media-hero {
+      aspect-ratio: 2079 / 1450;
+    }
+  }
+
+  /* Quiet editorial metadata, not a badge. */
+  .meta {
+    font-size: var(--text-meta);
+    line-height: 1.45;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  /* Large muted archive numerals. */
+  .numeral {
+    font-family: var(--font-serif);
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  /* Actions -------------------------------------------------------------- */
+  .action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
+    font-size: var(--text-body);
+    line-height: 1.2;
+    text-decoration: none;
+    transition:
+      background-color 160ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 160ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .action-primary {
+    background-color: var(--color-accent);
+    color: #10101a;
+    border: 1px solid var(--color-accent);
+    font-weight: 500;
+  }
+
+  .action-primary:hover {
+    background-color: var(--color-accent-strong);
+    border-color: var(--color-accent-strong);
+  }
+
+  .action-secondary {
+    background-color: transparent;
+    color: var(--color-text-strong);
+    border: 1px solid var(--color-rule);
+  }
+
+  .action-secondary:hover {
+    border-color: var(--color-text-muted);
+    background-color: var(--color-surface-1);
+  }
+
+  /* The arrow shifts 3px; layout never moves. */
+  .action .arrow,
+  .link-rule .arrow {
+    display: inline-block;
+    transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .action:hover .arrow,
+  .link-rule:hover .arrow {
+    transform: translateX(3px);
+  }
+
+  /* Quiet text link with a moving rule. */
+  .link-rule {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    color: var(--color-text-strong);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-rule);
+    transition: border-color 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .link-rule:hover {
+    border-bottom-color: var(--color-accent-strong);
+  }
+
+  /* Skip link ------------------------------------------------------------ */
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 1.25rem;
+    z-index: 60;
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
+    background-color: var(--color-text-strong);
+    color: var(--color-canvas);
+    text-decoration: none;
+    transform: translateY(-250%);
+    transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .skip-link:focus {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion
+   Meaning is never carried by animation, so removing it costs no information.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
