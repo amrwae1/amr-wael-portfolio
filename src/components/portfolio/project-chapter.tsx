@@ -2,6 +2,7 @@ import type { projects } from "@/content/portfolio";
 import { EvidenceFigure } from "./evidence-figure";
 import { BoundaryNote, EvidenceLabel } from "./evidence-label";
 import { MissingAssetGroup, MissingAssetRows } from "./missing-asset";
+import { Reveal } from "./reveal";
 
 type Project = (typeof projects)[number];
 
@@ -23,13 +24,14 @@ export function ProjectChapter({ project }: { project: Project }) {
       className="scroll-mt-24 border-t border-rule pt-8"
       aria-labelledby={`${project.id}-heading`}
     >
-      <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
-        <span className="numeral text-title">{project.index}</span>
+      <Reveal className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+        <span className="folio">{project.index}</span>
         <span className="meta">{project.name}</span>
         <span className="meta">{project.category}</span>
-      </div>
+        <span className="rule-fill" aria-hidden="true" />
+      </Reveal>
 
-      <div className="grid-12 mt-10">
+      <Reveal className="grid-12 mt-10">
         {/* Copy ---------------------------------------------------------- */}
         <div className="col-span-4 md:col-span-8 lg:col-span-5 lg:col-start-8">
           <h3
@@ -109,11 +111,11 @@ export function ProjectChapter({ project }: { project: Project }) {
             </>
           )}
         </div>
-      </div>
+      </Reveal>
 
-      <div className="mt-12">
+      <Reveal className="mt-12">
         <BoundaryNote>{project.boundary}</BoundaryNote>
-      </div>
+      </Reveal>
     </article>
   );
 }

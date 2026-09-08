@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
 import { site } from "@/content/portfolio";
 
 /**
@@ -11,18 +12,43 @@ import { site } from "@/content/portfolio";
  * header rather than a floating sales widget. Radix Dialog supplies the mobile
  * sheet so focus trapping, escape handling, and scroll locking are correct;
  * the styling is entirely ours.
+ *
+ * The header also does two pieces of orientation work, which a page this long
+ * genuinely needs: a hairline that reports how far through the page the reader
+ * is, and a nav item that marks the section currently under them. Both are
+ * orientation, not engagement — neither adds a destination or asks for a click.
  */
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const current = useCurrentSection();
+  const reduce = useReducedMotion();
+
+  /* Reading position, drawn on the header's own rule. The spring only smooths
+     a value the reader is already driving with their scroll; with reduced
+     motion the raw progress is used so the line still tracks, without easing. */
+  const { scrollYProgress } = useScroll();
+  const smoothed = useSpring(scrollYProgress, {
+    stiffness: 140,
+    damping: 30,
+    restDelta: 0.001,
+  });
 
   return (
     <header className="sticky top-0 z-50 border-b border-rule bg-canvas/85 backdrop-blur-md">
+      <motion.div
+        aria-hidden="true"
+        style={{ scaleX: reduce ? scrollYProgress : smoothed }}
+        className="absolute inset-x-0 -bottom-px h-px origin-left bg-accent-strong/70"
+      />
       <div className="shell flex h-16 items-center justify-between gap-6">
         <a
           href="#top"
-          className="inline-flex min-h-11 items-center font-serif text-[1.35rem] leading-none tracking-[-0.02em] text-text-strong no-underline"
+          className="inline-flex min-h-11 items-baseline gap-2 font-serif text-[1.4rem] leading-none tracking-[-0.03em] text-text-strong no-underline"
         >
           {site.name}
+          <span aria-hidden="true" className="meta hidden text-text-muted sm:inline">
+            {site.role}
+          </span>
           <span className="sr-only"> — {site.role}, back to top</span>
         </a>
 
@@ -32,7 +58,8 @@ export function SiteHeader() {
             <a
               key={item.href}
               href={item.href}
-              className="link-rule border-b-transparent text-[0.95rem]"
+              aria-current={current === item.href.slice(1) ? "location" : undefined}
+              className="nav-link text-[0.95rem]"
             >
               {item.label}
             </a>
@@ -82,6 +109,7 @@ export function SiteHeader() {
                   <a
                     key={item.href}
                     href={item.href}
+                    aria-current={current === item.href.slice(1) ? "location" : undefined}
                     onClick={() => setOpen(false)}
                     className="flex min-h-[44px] items-center border-b border-rule py-3 font-serif text-[1.4rem] text-text-strong no-underline"
                   >
@@ -106,4 +134,51 @@ export function SiteHeader() {
       </div>
     </header>
   );
+}
+
+/**
+ * The id of the navigable section currently under the reader, or null when they
+ * are in the hero or the closing invitation — neither of which is in the nav,
+ * so marking one of them would be a lie.
+ *
+ * The root margin leaves a narrow band across the middle of the viewport: a
+ * section becomes current when it crosses the reader's line of sight, not when
+ * its first pixel appears. Sections are read from the nav so the two can never
+ * drift apart.
+ */
+function useCurrentSection() {
+  const [current, setCurrent] = useState<string | null>(null);
+
+  useEffect(() => {
+    const targets = site.navigation
+      .map((item) => document.getElementById(item.href.slice(1)))
+      .filter((el): el is HTMLElement => el !== null);
+
+    if (targets.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setCurrent((previous) => {
+          const entering = entries.find((entry) => entry.isIntersecting);
+          if (entering) return entering.target.id;
+
+          // Only clear when the section that *was* current is the one leaving,
+          // so scrolling past an unrelated section cannot blank the marker.
+          const currentLeft = entries.some(
+            (entry) => !entry.isIntersecting && entry.target.id === previous,
+          );
+          return currentLeft ? null : previous;
+        });
+      },
+      /* A band across the middle third of the viewport. Narrower than this and
+         the chapter gap between two sections falls outside it, which blanks the
+         marker mid-transition; wider and two sections claim the reader at once. */
+      { rootMargin: "-35% 0px -35% 0px" },
+    );
+
+    targets.forEach((target) => observer.observe(target));
+    return () => observer.disconnect();
+  }, []);
+
+  return current;
 }

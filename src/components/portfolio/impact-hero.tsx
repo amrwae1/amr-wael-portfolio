@@ -19,12 +19,17 @@ export function ImpactHero() {
   return (
     <section
       id="top"
-      className="shell pt-12 pb-[var(--spacing-chapter)] lg:pt-16"
+      className="shell relative isolate overflow-x-clip pt-12 pb-[var(--spacing-chapter)] lg:pt-16"
       aria-labelledby="hero-heading"
     >
-      <p className="meta">Product designer · B2B product systems · Cairo</p>
+      <div className="aura" aria-hidden="true" />
 
-      <div className="grid-12 mt-6 lg:gap-y-0">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-t border-rule pt-4">
+        <p className="meta">Product designer · B2B product systems · Cairo</p>
+        <p className="meta text-text-muted">Portfolio · {new Date().getFullYear()}</p>
+      </div>
+
+      <div className="grid-12 mt-8 lg:gap-y-0">
         <h1
           id="hero-heading"
           className="col-span-4 text-hero leading-[0.98] tracking-[-0.025em] md:col-span-8 lg:col-span-7"
@@ -59,7 +64,7 @@ export function ImpactHero() {
         <HeroEvidence />
 
         {/* What the screen above already demonstrates, in its own order. */}
-        <ol className="mt-4 flex list-none flex-wrap items-center gap-x-2 gap-y-1 p-0">
+        <ol className="caption-strip mt-4 flex list-none flex-wrap items-center gap-x-2 gap-y-1 p-0">
           {hero.sequence.map((step, i) => (
             <li key={step} className="meta flex items-center gap-2">
               {i > 0 ? (

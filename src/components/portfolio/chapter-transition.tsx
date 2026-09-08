@@ -25,8 +25,11 @@ export function ChapterTransition({ label, children }: { label: string; children
           ease: standardEase,
         }}
       >
-        <p className="meta">{label}</p>
-        <p className="mt-5 max-w-[34ch] font-serif text-chapter leading-[1.1] tracking-[-0.02em] text-text-strong">
+        <div className="flex items-baseline gap-x-6">
+          <p className="meta">{label}</p>
+          <span className="rule-fill" aria-hidden="true" />
+        </div>
+        <p className="mt-6 max-w-[34ch] font-serif text-chapter leading-[1.1] tracking-[-0.02em] text-text-strong">
           {children}
         </p>
       </motion.div>

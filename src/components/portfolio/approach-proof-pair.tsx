@@ -1,4 +1,5 @@
 import { approach } from "@/content/portfolio";
+import { Reveal } from "./reveal";
 
 /**
  * Approach, read back out of the work.
@@ -15,8 +16,11 @@ export function ApproachProofPair() {
       className="shell scroll-mt-24 pb-[var(--spacing-chapter)]"
       aria-labelledby="approach-heading"
     >
-      <div className="border-t border-rule pt-8">
-        <p className="meta">Approach</p>
+      <Reveal className="border-t border-rule pt-8">
+        <div className="flex items-baseline gap-x-6">
+          <p className="meta">Approach</p>
+          <span className="rule-fill" aria-hidden="true" />
+        </div>
 
         <div className="grid-12 mt-10">
           <h2
@@ -29,13 +33,21 @@ export function ApproachProofPair() {
             {approach.body}
           </p>
         </div>
-      </div>
+      </Reveal>
 
       <ol className="mt-16 flex list-none flex-col p-0">
-        {approach.steps.map((step) => (
-          <li key={step.index} className="border-t border-rule">
-            <div className="grid-12 py-9">
-              <span className="numeral col-span-4 text-title md:col-span-1 lg:col-span-1">
+        {approach.steps.map((step, i) => (
+          /* A short stagger — the five steps are one argument in sequence, and
+             they arrive in that order. Capped so a reader who scrolls quickly
+             never waits on a row already in front of them. */
+          <Reveal
+            as="li"
+            key={step.index}
+            delay={Math.min(i, 3) * 0.05}
+            className="border-t border-rule"
+          >
+            <div className="grid-12 py-10 lg:py-12">
+              <span className="folio col-span-4 md:col-span-1 lg:col-span-1">
                 {step.index}
               </span>
 
@@ -56,7 +68,7 @@ export function ApproachProofPair() {
                 </a>
               </div>
             </div>
-          </li>
+          </Reveal>
         ))}
       </ol>
     </section>

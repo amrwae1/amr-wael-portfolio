@@ -1,6 +1,7 @@
 import { noon } from "@/content/portfolio";
 import { EvidenceFigure } from "./evidence-figure";
 import { BoundaryNote, EvidenceLabel } from "./evidence-label";
+import { Reveal } from "./reveal";
 
 /**
  * Noon — the second chapter.
@@ -24,13 +25,14 @@ export function NoonChapter() {
       aria-labelledby="noon-heading"
     >
       {/* Chapter head --------------------------------------------------- */}
-      <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
-        <span className="numeral text-title">{noon.index}</span>
+      <Reveal className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+        <span className="folio">{noon.index}</span>
         <span className="meta">{noon.name}</span>
         <span className="meta">{noon.category}</span>
-      </div>
+        <span className="rule-fill" aria-hidden="true" />
+      </Reveal>
 
-      <div className="grid-12 mt-10">
+      <Reveal className="grid-12 mt-10">
         <h3
           id="noon-heading"
           className="col-span-4 text-project leading-[1.12] tracking-[-0.02em] md:col-span-8 lg:col-span-7"
@@ -52,17 +54,17 @@ export function NoonChapter() {
             </span>
           </a>
         </div>
-      </div>
+      </Reveal>
 
       {/* The problem ---------------------------------------------------- */}
-      <div className="grid-12 mt-[var(--spacing-chapter)]">
+      <Reveal className="grid-12 mt-[var(--spacing-chapter)]">
         <div className="col-span-4 md:col-span-8 lg:col-span-6">
           <h4 className="font-serif text-title leading-[1.2] tracking-[-0.01em] text-text-strong">
             {noon.problem.heading}
           </h4>
           <div className="measure mt-6 flex flex-col gap-4">
-            {noon.problem.body.map((para) => (
-              <p key={para} className="text-text">
+            {noon.problem.body.map((para, i) => (
+              <p key={para} className={i === 0 ? "dropcap text-text" : "text-text"}>
                 {para}
               </p>
             ))}
@@ -83,10 +85,10 @@ export function NoonChapter() {
             </div>
           ))}
         </dl>
-      </div>
+      </Reveal>
 
       {/* What the redesign concluded ------------------------------------ */}
-      <div className="grid-12 mt-[var(--spacing-chapter)]">
+      <Reveal className="grid-12 mt-[var(--spacing-chapter)]">
         <div className="col-span-4 md:col-span-8 lg:col-span-7">
           <EvidenceLabel kind="reasoning" />
           <dl className="mt-6 grid gap-x-6 gap-y-0 sm:grid-cols-2">
@@ -117,10 +119,10 @@ export function NoonChapter() {
             ))}
           </ul>
         </div>
-      </div>
+      </Reveal>
 
       {/* The four moves ------------------------------------------------- */}
-      <div className="mt-[var(--spacing-chapter)]">
+      <Reveal className="mt-[var(--spacing-chapter)]">
         <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
           <p className="meta">Redesigning the decision flow</p>
           <p className="meta max-w-[52ch] normal-case tracking-normal">
@@ -146,7 +148,7 @@ export function NoonChapter() {
             const portrait = move.figure.height > move.figure.width;
 
             return (
-              <li key={move.index} className="grid-12 items-start border-t border-rule pt-8">
+              <Reveal as="li" key={move.index} className="grid-12 items-start border-t border-rule pt-8">
                 <div className="col-span-4 md:col-span-8 lg:col-span-4">
                   <div className="flex items-baseline gap-3">
                     <span className="numeral text-[0.95rem]">{move.index}</span>
@@ -176,14 +178,14 @@ export function NoonChapter() {
                     }
                   />
                 </div>
-              </li>
+              </Reveal>
             );
           })}
         </ol>
-      </div>
+      </Reveal>
 
       {/* Expected, not measured ----------------------------------------- */}
-      <div className="mt-[var(--spacing-chapter)] border-t border-rule pt-10">
+      <Reveal className="mt-[var(--spacing-chapter)] border-t border-rule pt-10">
         <EvidenceLabel kind="intended" />
         <p className="measure mt-4 text-lead leading-[1.4] text-text-strong">
           What the redesign is built to produce. None of it has been measured.
@@ -199,11 +201,11 @@ export function NoonChapter() {
             </li>
           ))}
         </ul>
-      </div>
+      </Reveal>
 
-      <div className="mt-14">
+      <Reveal className="mt-14">
         <BoundaryNote>{noon.boundary}</BoundaryNote>
-      </div>
+      </Reveal>
     </article>
   );
 }

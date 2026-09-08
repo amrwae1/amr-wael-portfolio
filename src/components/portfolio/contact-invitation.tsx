@@ -1,4 +1,5 @@
 import { contact, site } from "@/content/portfolio";
+import { Reveal } from "./reveal";
 
 /**
  * The closing invitation.
@@ -15,7 +16,17 @@ export function ContactInvitation() {
       className="shell scroll-mt-24 pb-[var(--spacing-chapter)]"
       aria-labelledby="contact-heading"
     >
-      <div className="grid-12 border-t border-rule pt-[var(--spacing-chapter)]">
+      <Reveal className="border-t border-rule pt-8">
+        <div className="flex items-baseline gap-x-6">
+          <span className="folio" aria-hidden="true">
+            &mdash;
+          </span>
+          <p className="meta">Contact</p>
+          <span className="rule-fill" aria-hidden="true" />
+        </div>
+      </Reveal>
+
+      <Reveal className="grid-12 mt-12 md:mt-16">
         <div className="col-span-4 md:col-span-8 lg:col-span-7">
           <h2 id="contact-heading" className="text-chapter leading-[1.08] tracking-[-0.02em]">
             {contact.heading}
@@ -61,7 +72,7 @@ export function ContactInvitation() {
             ))}
           </ul>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

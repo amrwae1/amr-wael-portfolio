@@ -36,13 +36,17 @@
   /* Type scale ------------------------------------------------------------- */
   --text-meta: clamp(0.78rem, 0.75rem + 0.12vw, 0.86rem);
   --text-body: clamp(1rem, 0.96rem + 0.18vw, 1.125rem);
-  --text-lead: clamp(1.2rem, 1.08rem + 0.55vw, 1.55rem);
-  --text-title: clamp(1.6rem, 1.35rem + 1.05vw, 2.25rem);
-  --text-chapter: clamp(2.2rem, 1.65rem + 2.2vw, 3.75rem);
+  --text-lead: clamp(1.25rem, 1.1rem + 0.62vw, 1.6rem);
+  --text-title: clamp(1.7rem, 1.4rem + 1.15vw, 2.4rem);
+  --text-chapter: clamp(2.35rem, 1.7rem + 2.6vw, 4rem);
   /* Sits between chapter and title so the flagship stays visibly senior to the
      large secondary project, which in turn stays senior to the medium one. */
-  --text-project: clamp(1.9rem, 1.4rem + 1.75vw, 3rem);
+  --text-project: clamp(2rem, 1.45rem + 1.95vw, 3.25rem);
+  /* Capped low on purpose: the hero claim has to resolve to two lines above the
+     proof on a small laptop — see DESIGN.md §4. */
   --text-hero: clamp(2rem, 1.35rem + 2.4vw, 3.75rem);
+  /* The large muted numeral that hangs in a chapter's left rail. */
+  --text-folio: clamp(1.7rem, 1.2rem + 2vw, 3rem);
 
   /* Rhythm ----------------------------------------------------------------- */
   --spacing-gutter: 1.5rem;
@@ -63,6 +67,10 @@
     color-scheme: dark;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    /* Editorial detail: quotes and hyphens hang into the margin where supported
+       (Safari today), and never regress the layout where they are not. */
+    hanging-punctuation: first allow-end last;
+    text-rendering: optimizeLegibility;
   }
 
   body {
@@ -82,6 +90,11 @@
     color: var(--color-text-strong);
     font-weight: 400;
     text-wrap: balance;
+    /* Source Serif 4 carries an optical-size axis; let the browser pick the
+       display cut at large sizes and the text cut at small ones. */
+    font-optical-sizing: auto;
+    letter-spacing: -0.021em;
+    font-feature-settings: "liga" 1, "calt" 1;
   }
 
   p {
@@ -98,6 +111,20 @@
   ::selection {
     background-color: var(--color-accent);
     color: #10101a;
+  }
+
+  /* Print grain: a warm fractal-noise film over the whole canvas at ~3%, well
+     below the level where it touches text contrast. Purely decorative, so it is
+     inert to the pointer and to assistive tech, and it is static — no motion. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.032;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }
 
@@ -194,6 +221,114 @@
     color: var(--color-text-muted);
     font-variant-numeric: tabular-nums;
     line-height: 1;
+  }
+
+  /* The chapter folio — a book-scale numeral that hangs in the left rail of a
+     chapter head. Larger and more present than .numeral, which stays inline. */
+  .folio {
+    font-family: var(--font-serif);
+    font-size: var(--text-folio);
+    line-height: 0.86;
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-optical-sizing: auto;
+  }
+
+  /* A hairline that runs out to the edge after a masthead row's labels.
+     Hidden on narrow screens, where the labels wrap and a trailing rule would
+     drop onto its own line as a stray full-width bar. */
+  .rule-fill {
+    display: none;
+    align-self: center;
+    height: 1px;
+    flex: 1 1 2rem;
+    min-width: 1.5rem;
+    background-color: var(--color-rule);
+  }
+
+  @media (min-width: 40rem) {
+    .rule-fill {
+      display: block;
+    }
+  }
+
+  /* Editorial opening: a raised serif initial on the first paragraph of a
+     chapter's argument. Never used on UI copy or list items. */
+  .dropcap::first-letter {
+    float: left;
+    /* `line-height: 1` keeps the float's box equal to its font size, which is
+       what makes the cap land on a predictable number of lines: 3.1em against a
+       1.6 body leading is ~1.94 line boxes, so it displaces exactly two. A
+       smaller leading here let the glyph's box overflow above the paragraph and
+       push into a third line. */
+    font-size: 3.1em;
+    line-height: 1;
+    margin-inline-end: 0.07em;
+    margin-block-start: 0.02em;
+    font-family: var(--font-serif);
+    color: var(--color-text-strong);
+    font-optical-sizing: auto;
+  }
+
+  /* Sits a caption tight under its plate on a shared hairline. */
+  .caption-strip {
+    border-top: 1px solid var(--color-rule);
+    padding-top: 0.85rem;
+  }
+
+  /* Warm elliptical light behind the masthead, so the opening reads as lit
+     rather than flat. Decorative, inert, and clipped by the hero's isolation. */
+  .aura {
+    position: absolute;
+    inset-inline: -8%;
+    top: -16rem;
+    height: 42rem;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      50% 50% at 50% 45%,
+      color-mix(in srgb, var(--color-accent) 20%, transparent) 0%,
+      transparent 72%
+    );
+    filter: blur(48px);
+  }
+
+  /* Primary-nav link: an accent rule that wipes in from the left on hover or
+     keyboard focus. Layout never moves. */
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--color-text);
+    text-decoration: none;
+    background-image: linear-gradient(
+      var(--color-accent-strong),
+      var(--color-accent-strong)
+    );
+    background-repeat: no-repeat;
+    background-position: left 100%;
+    background-size: 0% 1px;
+    transition:
+      background-size 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 160ms ease;
+  }
+
+  .nav-link:hover,
+  .nav-link:focus-visible {
+    color: var(--color-text-strong);
+    background-size: 100% 1px;
+  }
+
+  /* The section currently under the reader keeps its rule drawn. State is
+     carried by aria-current, so the marker is announced and not colour-only. */
+  .nav-link[aria-current] {
+    color: var(--color-text-strong);
+    background-size: 100% 1px;
+  }
+
+  /* The same mark in the mobile sheet, where the links are ruled rows. */
+  nav a[aria-current] {
+    border-bottom-color: var(--color-accent-strong);
   }
 
   /* Actions -------------------------------------------------------------- */

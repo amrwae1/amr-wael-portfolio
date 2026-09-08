@@ -1,6 +1,7 @@
 import { valora } from "@/content/portfolio";
 import { EvidenceFigure } from "./evidence-figure";
 import { BoundaryNote, EvidenceLabel } from "./evidence-label";
+import { Reveal } from "./reveal";
 import { ValoraDecisionView } from "./valora-decision-view";
 
 const [dashboard, evidence, plan, progress] = valora.figures;
@@ -21,11 +22,12 @@ export function ValoraChapter() {
       aria-labelledby="valora-heading"
     >
       {/* Chapter head --------------------------------------------------- */}
-      <div className="border-t border-rule pt-8">
+      <Reveal className="border-t border-rule pt-8">
         <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
-          <span className="numeral text-title">{valora.index}</span>
+          <span className="folio">{valora.index}</span>
           <span className="meta">{valora.name}</span>
           <span className="meta">{valora.category}</span>
+          <span className="rule-fill" aria-hidden="true" />
         </div>
 
         <div className="grid-12 mt-10">
@@ -51,17 +53,17 @@ export function ValoraChapter() {
             </a>
           </div>
         </div>
-      </div>
+      </Reveal>
 
       {/* The problem ---------------------------------------------------- */}
-      <div className="grid-12 mt-[var(--spacing-chapter)]">
+      <Reveal className="grid-12 mt-[var(--spacing-chapter)]">
         <div className="col-span-4 md:col-span-8 lg:col-span-6">
           <h3 className="text-title leading-[1.2] tracking-[-0.01em]">
             {valora.problem.heading}
           </h3>
           <div className="measure mt-6 flex flex-col gap-4">
-            {valora.problem.body.map((para) => (
-              <p key={para} className="text-text">
+            {valora.problem.body.map((para, i) => (
+              <p key={para} className={i === 0 ? "dropcap text-text" : "text-text"}>
                 {para}
               </p>
             ))}
@@ -75,18 +77,18 @@ export function ValoraChapter() {
             {valora.whyThisSignal.body}
           </p>
         </div>
-      </div>
+      </Reveal>
 
       {/* Overview and prioritisation — widest plate in the chapter ------- */}
-      <div className="mt-[var(--spacing-chapter)]">
+      <Reveal className="mt-[var(--spacing-chapter)]">
         <EvidenceFigure
           {...dashboard}
           sizes="(min-width: 1440px) 1296px, (min-width: 1024px) 90vw, 100vw"
         />
-      </div>
+      </Reveal>
 
       {/* The comparison that carries the product logic ------------------- */}
-      <div className="grid-12 mt-[var(--spacing-chapter)]">
+      <Reveal className="grid-12 mt-[var(--spacing-chapter)]">
         <div className="col-span-4 md:col-span-8 lg:col-span-4">
           <h3 className="text-title leading-[1.2] tracking-[-0.01em]">
             {valora.decisionView.heading}
@@ -96,10 +98,10 @@ export function ValoraChapter() {
         <div className="col-span-4 md:col-span-8 lg:col-span-7 lg:col-start-6">
           <ValoraDecisionView />
         </div>
-      </div>
+      </Reveal>
 
       {/* Evidence, with the reasoning beside the interface detail -------- */}
-      <div className="grid-12 mt-[var(--spacing-chapter)] items-end">
+      <Reveal className="grid-12 mt-[var(--spacing-chapter)] items-end">
         <div className="col-span-4 md:col-span-8 lg:col-span-8">
           <EvidenceFigure {...evidence} sizes="(min-width: 1024px) 62vw, 100vw" note={undefined} />
         </div>
@@ -107,27 +109,27 @@ export function ValoraChapter() {
           <EvidenceLabel kind="reasoning" />
           <p className="mt-3 text-[0.95rem] leading-relaxed text-text-muted">{evidence.note}</p>
         </div>
-      </div>
+      </Reveal>
 
       {/* Translation into a plan — offset right -------------------------- */}
-      <div className="grid-12 mt-[var(--spacing-chapter)]">
+      <Reveal className="grid-12 mt-[var(--spacing-chapter)]">
         <div className="col-span-4 md:col-span-8 lg:col-span-9 lg:col-start-4">
           <EvidenceFigure {...plan} sizes="(min-width: 1024px) 70vw, 100vw" />
         </div>
-      </div>
+      </Reveal>
 
       {/* Follow-through — narrow, left, a deliberate change of pace ------ */}
-      <div className="grid-12 mt-[var(--spacing-chapter)] items-center">
+      <Reveal className="grid-12 mt-[var(--spacing-chapter)] items-center">
         <div className="col-span-4 md:col-span-5 lg:col-span-5">
           <EvidenceFigure {...progress} sizes="(min-width: 1024px) 40vw, 100vw" note={undefined} />
         </div>
         <div className="col-span-4 md:col-span-8 lg:col-span-5 lg:col-start-7">
           <p className="text-[0.95rem] leading-relaxed text-text-muted">{progress.note}</p>
         </div>
-      </div>
+      </Reveal>
 
       {/* System foundation --------------------------------------------- */}
-      <div className="mt-[var(--spacing-chapter)] border-t border-rule pt-10">
+      <Reveal className="mt-[var(--spacing-chapter)] border-t border-rule pt-10">
         <p className="meta">System foundation</p>
         <p className="measure mt-4 text-lead leading-[1.4] text-text-strong">
           {valora.systemNote}
@@ -149,12 +151,12 @@ export function ValoraChapter() {
             />
           </div>
         </div>
-      </div>
+      </Reveal>
 
       {/* Where the evidence stops -------------------------------------- */}
-      <div className="mt-16">
+      <Reveal className="mt-16">
         <BoundaryNote>{valora.boundary}</BoundaryNote>
-      </div>
+      </Reveal>
     </section>
   );
 }

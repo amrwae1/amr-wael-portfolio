@@ -10,6 +10,9 @@ const editorial = Source_Serif_4({
   subsets: ["latin"],
   variable: "--font-editorial",
   display: "swap",
+  // Ship the optical-size axis so `font-optical-sizing: auto` has a display cut
+  // to reach for in the large editorial headings.
+  axes: ["opsz"],
 });
 
 const interface_ = Public_Sans({
@@ -55,7 +58,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       data-scroll-behavior="smooth"
       className={`${editorial.variable} ${interface_.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        {/*
+          The scroll reveals render their hidden initial state into the server
+          HTML. Without JavaScript nothing ever animates them back in, so the
+          page would arrive almost entirely blank. This restores it — the
+          content is all there either way; only the gesture is lost.
+        */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+        {children}
+      </body>
     </html>
   );
 }
