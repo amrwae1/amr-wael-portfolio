@@ -1,3 +1,4 @@
+import { CursorMark } from "@/components/portfolio/cursor-mark";
 import { SiteHeader } from "@/components/portfolio/site-header";
 import { ImpactHero } from "@/components/portfolio/impact-hero";
 import { ValoraChapter } from "@/components/portfolio/valora-chapter";
@@ -13,6 +14,7 @@ export default function Home() {
         Skip to content
       </a>
 
+      <CursorMark />
       <SiteHeader />
 
       <main id="main">

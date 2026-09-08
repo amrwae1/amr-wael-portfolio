@@ -400,6 +400,62 @@
     border-bottom-color: var(--color-accent-strong);
   }
 
+  /* --- The registration mark (custom pointer) ---------------------------
+     Geometry only; every state is driven from cursor-mark.tsx. The ring is a
+     fixed 64px box scaled on the compositor rather than resized, so no state
+     change touches layout. Nothing here ever takes a pointer event. */
+  .cursor-root {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9998; /* under the grain film, above everything else */
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .cursor-ring {
+    position: absolute;
+    left: -32px;
+    top: -32px;
+    display: block;
+    width: 64px;
+    height: 64px;
+    border: 1px solid var(--color-text-muted);
+    border-radius: 9999px;
+  }
+
+  /* Over prose the ring gives way to this, so selectable text still looks
+     selectable — the one piece of information the native I-beam carried. */
+  .cursor-caret {
+    position: absolute;
+    left: 0;
+    top: -11px;
+    display: block;
+    width: 1px;
+    height: 22px;
+    background-color: var(--color-text-strong);
+  }
+
+  .cursor-dot {
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 9999px;
+    background-color: var(--color-text-strong);
+  }
+
+  /* Set from the component only after it mounts, so a coarse pointer, reduced
+     motion, or no JavaScript all keep the system cursor untouched. */
+  :root[data-cursor="mark"],
+  :root[data-cursor="mark"] * {
+    cursor: none;
+  }
+
   /* Skip link ------------------------------------------------------------ */
   .skip-link {
     position: fixed;
