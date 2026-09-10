@@ -456,6 +456,95 @@
     cursor: none;
   }
 
+  /* ======================================================================
+     LAB — liquid glass
+     Used only by /lab. Kept out of the portfolio's own vocabulary on purpose:
+     this is a different art direction under evaluation, not part of the
+     Dark Modern Archivist system above.
+     ====================================================================== */
+
+  .liquid-glass {
+    background: rgba(255, 255, 255, 0.01);
+    background-blend-mode: luminosity;
+    backdrop-filter: blur(4px) saturate(140%);
+    -webkit-backdrop-filter: blur(4px) saturate(140%);
+    border: none;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* The lit edge. A 1.4px gradient ring masked to the border box only, which
+     is what reads as a bevel catching light rather than a painted outline. */
+  .liquid-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.4px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.45) 0%,
+      rgba(255, 255, 255, 0.15) 20%,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0) 60%,
+      rgba(255, 255, 255, 0.15) 80%,
+      rgba(255, 255, 255, 0.45) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* --- Volumetric backdrop ----------------------------------------------
+     Replaces the reference's background video. Four large, heavily blurred
+     colour bodies drift on long, mutually prime durations so the field never
+     visibly repeats, and a parallax layer above them responds to the pointer.
+     Entirely in CSS transforms, so it composites on the GPU and ships no
+     megabytes. */
+  .lab-body {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(72px);
+    will-change: transform;
+    opacity: 0.55;
+  }
+
+  @keyframes lab-drift-a {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    33% { transform: translate3d(6vw, -4vh, 0) scale(1.12); }
+    66% { transform: translate3d(-4vw, 5vh, 0) scale(0.94); }
+  }
+
+  @keyframes lab-drift-b {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
+    40% { transform: translate3d(-7vw, 6vh, 0) scale(0.9); }
+    75% { transform: translate3d(5vw, 3vh, 0) scale(1.15); }
+  }
+
+  @keyframes lab-drift-c {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(0.95); }
+    50% { transform: translate3d(4vw, 7vh, 0) scale(1.2); }
+  }
+
+  /* A slow sheen crossing the field, so the glass has something moving to
+     refract — the part a static gradient can never supply. */
+  @keyframes lab-sheen {
+    0% { transform: translate3d(-60%, 0, 0) rotate(8deg); opacity: 0; }
+    35% { opacity: 0.5; }
+    65% { opacity: 0.5; }
+    100% { transform: translate3d(160%, 0, 0) rotate(8deg); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lab-body {
+      animation: none !important;
+    }
+  }
+
   /* Skip link ------------------------------------------------------------ */
   .skip-link {
     position: fixed;
