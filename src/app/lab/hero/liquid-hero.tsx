@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import { contact, site } from "@/content/portfolio";
+import { PresenceFigure } from "./presence-figure";
 
 /**
  * Liquid-glass hero — art-direction study.
@@ -137,6 +138,24 @@ export function LiquidHero() {
         {/* Seats the whole field on black at the edges. */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.75)_100%)]" />
       </div>
+
+      {/* ── The presence ───────────────────────────────────────────────────
+          Sits between the field and the type: it has to occlude the colour to
+          read as a shadow, and stay behind the words so it never competes with
+          the claim. Its own parallax runs shallower than the field's, which is
+          what places it in front. */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-[5]"
+        style={{ x: midX, y: midY }}
+      >
+        <PresenceFigure className="h-full w-full" />
+      </motion.div>
+
+      {/* Grounds the figure: a soft pool of shadow where it meets the frame. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[6] h-[26vh] bg-gradient-to-t from-black via-black/55 to-transparent"
+      />
 
       {/* ── Navbar ─────────────────────────────────────────────────────── */}
       <header className="relative z-20 px-6 py-6">
