@@ -349,16 +349,23 @@
       color 160ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
+  /* White, matching `.action-stage` in the hero, so the site has one primary
+     button rather than a white one on the stage and a lapis one everywhere
+     else. 18.88:1 against the label — the highest-contrast pair on the page,
+     which is right for the one action the page is asking for.
+
+     This takes the primary action away from the accent. The accent's remaining
+     jobs are the current nav state and the strongest evidence connection, so it
+     stays scarce; it is simply no longer what marks the CTA. */
   .action-primary {
-    background-color: var(--color-accent);
-    color: #10101a;
-    border: 1px solid var(--color-accent);
+    background-color: #fff;
+    color: #111;
+    border: 1px solid #fff;
     font-weight: 500;
   }
 
   .action-primary:hover {
-    background-color: var(--color-accent-strong);
-    border-color: var(--color-accent-strong);
+    filter: brightness(0.94);
   }
 
   .action-secondary {

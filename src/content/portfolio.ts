@@ -74,9 +74,10 @@ export const site = {
     { label: "Work", href: "#work" },
     { label: "Approach", href: "#approach" },
   ],
-  contactLabel: "Discuss a product problem",
-  /** Verified from Amr's CV. */
-  contactHref: "mailto:amrwael322@gmail.com?subject=A%20product%20problem",
+  contactLabel: "Discuss your product opportunity",
+  /** Verified from Amr's CV. The subject follows the label, so the mail that
+      arrives is named the same way the button that sent it was. */
+  contactHref: "mailto:amrwael322@gmail.com?subject=A%20product%20opportunity",
 } as const;
 
 export const hero = {
