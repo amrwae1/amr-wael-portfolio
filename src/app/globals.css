@@ -1005,3 +1005,328 @@
     min-height: 8rem;
   }
 }
+
+/* ==========================================================================
+   The project card system
+   Four brand worlds on one grid. What is shared: the ratio, the type scale,
+   the spacing, the state timing, and a single easing curve. What varies: the
+   colour, the art, and which element completes a motion on hover.
+
+   Every state is driven from `.card`, so the whole card responds as one object
+   — there is nothing separately hoverable inside it.
+   ========================================================================== */
+
+@layer components {
+  .card {
+    --card-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    isolation: isolate;
+    /* Mobile: taller than wide, recomposed rather than cropped. */
+    aspect-ratio: 4 / 5;
+    padding: clamp(1.5rem, 5vw, 2.5rem);
+    border-radius: 14px;
+    border: 1px solid var(--color-rule);
+    background-color: var(--color-canvas);
+    text-decoration: none;
+    transition:
+      border-color 280ms var(--card-ease),
+      transform 280ms var(--card-ease);
+  }
+
+  @media (min-width: 48rem) {
+    .card {
+      aspect-ratio: 16 / 10;
+      padding: clamp(2rem, 3.4vw, 3.25rem);
+    }
+  }
+
+  .card:hover {
+    border-color: color-mix(in srgb, var(--tint-bright) 42%, transparent);
+  }
+
+  .card:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    border-color: color-mix(in srgb, var(--tint-bright) 42%, transparent);
+  }
+
+  /* Pressed: a small, fast acknowledgement. Never a bounce. */
+  .card:active {
+    transform: scale(0.995);
+  }
+
+  /* --- The wash ---------------------------------------------------------
+     The project colour, barely present at rest and lifting on approach. It is
+     also the colour that opens the project page, which is what makes the two
+     read as one move. */
+  .card-wash {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        120% 90% at 78% 12%,
+        color-mix(in srgb, var(--tint) 26%, transparent) 0%,
+        transparent 68%
+      ),
+      radial-gradient(
+        90% 70% at 12% 96%,
+        color-mix(in srgb, var(--tint) 12%, transparent) 0%,
+        transparent 70%
+      );
+    opacity: 0.55;
+    transition: opacity 320ms var(--card-ease);
+  }
+
+  .card:hover .card-wash,
+  .card:focus-visible .card-wash {
+    opacity: 1;
+  }
+
+  /* --- The art ---------------------------------------------------------- */
+  .card-art {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    z-index: -1;
+    width: 68%;
+    max-width: 26rem;
+    pointer-events: none;
+  }
+
+  .card-art svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  @media (min-width: 48rem) {
+    .card-art {
+      width: 52%;
+      inset-block-start: 50%;
+      transform: translateY(-50%);
+    }
+
+    .card[data-scale="flagship"] .card-art {
+      width: 46%;
+      inset-inline-end: 4%;
+    }
+  }
+
+  /* --- Type ------------------------------------------------------------- */
+  .card-body {
+    display: block;
+    position: relative;
+    max-width: 34ch;
+  }
+
+  .card-category {
+    display: block;
+    font-size: var(--text-meta);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    transition: color 240ms var(--card-ease);
+  }
+
+  .card:hover .card-category,
+  .card:focus-visible .card-category {
+    color: color-mix(in srgb, var(--tint-bright) 72%, var(--color-text));
+  }
+
+  .card-title {
+    display: block;
+    margin-block-start: 0.9rem;
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    color: var(--color-text-strong);
+  }
+
+  .card[data-scale="flagship"] .card-title {
+    font-size: clamp(2.4rem, 1.6rem + 3.6vw, 4.5rem);
+  }
+
+  .card-value {
+    display: block;
+    margin-block-start: 0.85rem;
+    max-width: 30ch;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: var(--color-text);
+  }
+
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-block-start: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .card-status {
+    font-size: var(--text-meta);
+    letter-spacing: 0.075em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .card-cue {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex: none;
+    border-radius: 999px;
+    border: 1px solid var(--color-rule);
+    color: var(--color-text);
+    transition:
+      transform 280ms var(--card-ease),
+      border-color 280ms var(--card-ease),
+      color 280ms var(--card-ease),
+      background-color 280ms var(--card-ease);
+  }
+
+  .card:hover .card-cue,
+  .card:focus-visible .card-cue {
+    transform: translateX(5px);
+    border-color: color-mix(in srgb, var(--tint-bright) 55%, transparent);
+    background-color: color-mix(in srgb, var(--tint) 18%, transparent);
+    color: var(--color-text-strong);
+  }
+
+  /* --- Per-project motion character ------------------------------------
+     Same timing and easing everywhere; a different element completes the
+     gesture in each. The card is fully legible before any of it runs. */
+
+  .v-field,
+  .v-priority,
+  .v-trail,
+  .n-bar,
+  .n-point,
+  .b-route,
+  .b-node,
+  .b-gap,
+  .k-settling {
+    transition:
+      transform 420ms var(--card-ease),
+      opacity 420ms var(--card-ease);
+  }
+
+  /* Valora: the field recedes and the one priority resolves further out. */
+  .card:hover .v-field,
+  .card:focus-visible .v-field {
+    opacity: 0.45;
+  }
+
+  .card:hover .v-priority,
+  .card:focus-visible .v-priority {
+    transform: translateX(8px);
+  }
+
+  .card:hover .v-trail,
+  .card:focus-visible .v-trail {
+    opacity: 0.85;
+  }
+
+  /* Noon: the fragments arrive at the line together. */
+  .n-bar {
+    transform: translateX(var(--dx));
+    transition-delay: calc(var(--i) * 45ms);
+  }
+
+  .card:hover .n-bar,
+  .card:focus-visible .n-bar {
+    transform: translateX(0);
+  }
+
+  .n-point {
+    transform: scale(0.6);
+    transform-origin: 157px 70px;
+    opacity: 0.55;
+  }
+
+  .card:hover .n-point,
+  .card:focus-visible .n-point {
+    transform: scale(1);
+    opacity: 1;
+    transition-delay: 190ms;
+  }
+
+  /* Booking: the two routes settle onto the shared reference, and the gap
+     between them — the thing actually being compared — becomes visible. */
+  .b-route-a {
+    transform: translateY(-6px);
+  }
+
+  .b-route-b {
+    transform: translateY(6px);
+  }
+
+  .card:hover .b-route,
+  .card:focus-visible .b-route {
+    transform: translateY(0);
+  }
+
+  .card:hover .b-gap,
+  .card:focus-visible .b-gap {
+    opacity: 0.85;
+    transition-delay: 220ms;
+  }
+
+  /* Karma: one piece settles in. The open edge stays open. */
+  .k-settling {
+    transform: translate(10px, -7px);
+    opacity: 0.3;
+  }
+
+  .card:hover .k-settling,
+  .card:focus-visible .k-settling {
+    transform: translate(0, 0);
+    opacity: 0.75;
+  }
+}
+
+/* The cards must read without any of it. */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card-wash,
+  .card-cue,
+  .card-category,
+  .v-field,
+  .v-priority,
+  .v-trail,
+  .n-bar,
+  .n-point,
+  .b-route,
+  .b-node,
+  .b-gap,
+  .k-settling {
+    transition: none !important;
+  }
+
+  /* Resting positions become the final ones, so nothing sits mid-gesture. */
+  .n-bar,
+  .b-route-a,
+  .b-route-b,
+  .k-settling {
+    transform: none !important;
+  }
+
+  .n-point {
+    transform: scale(1) !important;
+    opacity: 1 !important;
+  }
+
+  .k-settling {
+    opacity: 0.6 !important;
+  }
+}

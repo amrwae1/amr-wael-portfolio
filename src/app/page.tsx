@@ -5,7 +5,9 @@ import { HeroStage } from "@/components/portfolio/hero-stage";
 import { EvidenceBlock } from "@/components/portfolio/evidence-block";
 import { ContactInvitation } from "@/components/portfolio/contact-invitation";
 import { Reveal } from "@/components/portfolio/reveal";
+import { ProjectCard } from "@/components/portfolio/project-card";
 import { homeEvidence } from "@/content/projects";
+import { projectCardEntries } from "@/content/project-cards";
 
 /**
  * The home page: a landing page, not a collection of case studies.
@@ -61,9 +63,35 @@ export default function Home() {
             </p>
           </Reveal>
 
-          {homeEvidence.map((block, i) => (
-            <EvidenceBlock key={block.id} block={block} reversed={i % 2 === 1} />
-          ))}
+          {/* The cards, weighted. Valora takes the full width because it is
+              the flagship and the page should say so before any copy does;
+              Noon and Booking.com share a row as peers; Karma Shop closes
+              quietly, which is the right volume for work still in progress. */}
+          <div className="shell">
+            <Reveal variant="plate" className="pb-[var(--space-related)]">
+              <ProjectCard entry={projectCardEntries[0]} scale="flagship" />
+            </Reveal>
+
+            <div className="grid gap-[var(--space-related)] pb-[var(--space-related)] md:grid-cols-2">
+              {projectCardEntries.slice(1, 3).map((entry, i) => (
+                <Reveal variant="plate" key={entry.slug} delay={i * 0.06}>
+                  <ProjectCard entry={entry} />
+                </Reveal>
+              ))}
+            </div>
+
+            <Reveal variant="plate">
+              <ProjectCard entry={projectCardEntries[3]} scale="quiet" />
+            </Reveal>
+          </div>
+
+          {/* The evidence, after the cards. The cards are the invitation; these
+              are the one thing each project actually shows. */}
+          <div className="mt-[var(--space-section)]">
+            {homeEvidence.map((block, i) => (
+              <EvidenceBlock key={block.id} block={block} reversed={i % 2 === 1} />
+            ))}
+          </div>
 
           <Reveal className="shell pb-[var(--space-section)]">
             <Link href="/projects" className="action action-primary">
