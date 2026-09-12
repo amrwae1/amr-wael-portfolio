@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { hero, site } from "@/content/portfolio";
+import { hero, site, siteDomain } from "@/content/portfolio";
 
 export const alt = "Amr Wael — I design product solutions around the business outcomes that matter.";
 export const size = { width: 1200, height: 630 };
@@ -51,7 +51,7 @@ export default function OpenGraphImage() {
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ width: 40, height: 3, backgroundColor: "#8493c8" }} />
-          <div style={{ fontSize: 22, color: "#d3ccc0" }}>amr-wael.vercel.app</div>
+          <div style={{ fontSize: 22, color: "#d3ccc0" }}>{siteDomain}</div>
         </div>
       </div>
     ),

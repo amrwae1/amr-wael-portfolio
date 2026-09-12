@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Source_Serif_4, Public_Sans } from "next/font/google";
+import { siteOrigin } from "@/content/portfolio";
 import "./globals.css";
 
 /**
@@ -29,7 +30,7 @@ const description =
  * domain. Without it Next falls back to VERCEL_URL, which is per-deployment and
  * changes on every push — a shared link would point at a stale build.
  */
-const siteUrl = "https://amr-wael.vercel.app";
+const siteUrl = siteOrigin;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

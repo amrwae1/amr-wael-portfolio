@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { siteOrigin } from "@/content/portfolio";
 
 /**
  * One page, one entry. It exists so the canonical URL is declared explicitly
@@ -8,7 +9,7 @@ import type { MetadataRoute } from "next";
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: "https://amr-wael.vercel.app",
+      url: siteOrigin,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 1,

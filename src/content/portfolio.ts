@@ -43,6 +43,22 @@ export const evidenceMeta: Record<
 /* Site                                                                       */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * The canonical production origin, declared once.
+ *
+ * It was previously repeated as a literal in four places (metadata, robots,
+ * sitemap, and the social card), which meant a rename had to be found four
+ * times. Changing it here changes all of them.
+ *
+ * It must match the Vercel project name: the project is served at
+ * `<project-name>.vercel.app`, so renaming the project is what makes this
+ * resolve.
+ */
+export const siteOrigin = "https://amrwael.vercel.app";
+
+/** The same origin without its scheme, for display in the social card. */
+export const siteDomain = siteOrigin.slice("https://".length);
+
 export const site = {
   name: "Amr",
   role: "Product Designer",
