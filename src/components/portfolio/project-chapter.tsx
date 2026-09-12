@@ -31,7 +31,7 @@ export function ProjectChapter({ project }: { project: Project }) {
         <span className="rule-fill" aria-hidden="true" />
       </Reveal>
 
-      <Reveal className="grid-12 mt-10">
+      <Reveal variant="plate" className="grid-12 mt-10">
         {/* Copy ---------------------------------------------------------- */}
         <div className="col-span-4 md:col-span-8 lg:col-span-5 lg:col-start-8">
           <h3
@@ -61,7 +61,7 @@ export function ProjectChapter({ project }: { project: Project }) {
             ))}
           </ul>
 
-          <p className="meta mt-8">{project.status}</p>
+          <p className="meta measure mt-8">{project.status}</p>
 
           {/* A cautious client gets a route into the full case study. */}
           {"caseStudy" in project ? (
@@ -114,7 +114,7 @@ export function ProjectChapter({ project }: { project: Project }) {
       </Reveal>
 
       <Reveal className="mt-12">
-        <BoundaryNote>{project.boundary}</BoundaryNote>
+        <BoundaryNote test={project.boundaryTest}>{project.boundary}</BoundaryNote>
       </Reveal>
     </article>
   );

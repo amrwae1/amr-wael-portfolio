@@ -50,11 +50,17 @@ export const evidenceMeta: Record<
  * sitemap, and the social card), which meant a rename had to be found four
  * times. Changing it here changes all of them.
  *
- * It must match the Vercel project name: the project is served at
- * `<project-name>.vercel.app`, so renaming the project is what makes this
- * resolve.
+ * It must match the host that actually serves the site. The Vercel project was
+ * renamed to `amrwael`, but the `amrwael.vercel.app` alias has not attached —
+ * it still returns DEPLOYMENT_NOT_FOUND, while `amr-wael.vercel.app` serves.
+ * Pointing at the renamed host before it resolves published a canonical URL, a
+ * sitemap and an `og:image` that all 404, which silently broke the link preview
+ * on every share.
+ *
+ * Flip this the moment `amrwael.vercel.app` returns 200. Nothing else needs to
+ * change — that is the whole point of it living here.
  */
-export const siteOrigin = "https://amrwael.vercel.app";
+export const siteOrigin = "https://amr-wael.vercel.app";
 
 /** The same origin without its scheme, for display in the social card. */
 export const siteDomain = siteOrigin.slice("https://".length);
@@ -82,7 +88,18 @@ export const hero = {
    * layout that has room for it; this is what the hero can carry at a glance.
    * Both say the same thing, so they can never contradict each other.
    */
-  lead: "B2B product systems, worked back from the outcome that has to move — and the evidence behind it.",
+  /*
+   * The second sentence states sole authorship once, at the top.
+   *
+   * Every project here is self-directed, and each one says so in its own words
+   * further down — but a reader who never reaches those three separate mentions
+   * has no way to know. Unclear personal contribution is the most consistent
+   * reason a portfolio gets discounted, because a reviewer who cannot tell what
+   * was yours assumes the weakest reading. Having no team to share credit with
+   * removes that doubt entirely, which makes it a strength worth claiming
+   * rather than a fact to leave implicit.
+   */
+  lead: "B2B product systems, worked back from the outcome that has to move — and the evidence behind it. Every project here is self-directed, so every decision inside them is mine to defend.",
   primary: { label: "Explore Valora", href: "#valora" },
   secondary: { label: "View selected work", href: "#work" },
   /** The sequence the hero figure already demonstrates, read left to right. */
@@ -180,8 +197,14 @@ export const valora = {
   ],
   systemNote:
     "The screens above are drawn from a token and component layer rather than assembled per screen, which is why states and semantics stay consistent across them.",
+  /* Each project's boundary names the specific test that would close its gap,
+     not just the gap. Three near-identical disclaimers read as a liability
+     shield by the third one; three different falsifiable tests read as
+     judgement. The disclosure is unchanged — what follows it is new. */
   boundary:
     "This is a self-directed concept. The prototype and system are real and inspectable; the data inside them is demonstration content. Nothing here has been tested with sales managers, and no claim about improved management performance, revenue, or behaviour change is supported.",
+  boundaryTest:
+    "What would settle it: put the ranked list in front of managers with their own team's numbers in it, and check whether the issue at the top is the one they would have picked anyway. If the ordering only ever agrees with them, the prioritisation is decoration.",
   decisionView: {
     heading: "The move the product is actually making",
     body: "Both views hold the same underlying signals. The difference is whether the manager is handed the interpretation work or handed a position they can check.",
@@ -353,6 +376,8 @@ export const noon = {
     "Purchase friction is not only a usability problem — it is a business one. Trust in e-commerce is built gradually through visibility, clarity, and reassurance at the moment a decision is made.",
   boundary:
     "Reasoning and solution work. The screens are real design work; the product, prices, seller, and review counts inside them are representative content, not live Noon data. The outcomes above are the effects the redesign is built to produce — none has been measured, and no conversion, revenue, or behavioural result is claimed.",
+  boundaryTest:
+    "What would settle it: a comparative task on both versions of the page, watching where a shopper stalls rather than asking which one they prefer. Preference and hesitation are different measurements, and only the second one is the claim being made here.",
   /* Nothing reserved: all four moves now carry a real annotated figure,
      cropped from the published case study. */
   /* Two sources, deliberately. The first two moves come from the case study,
@@ -409,6 +434,8 @@ export const projects = [
     ],
     boundary:
       "Independent concept. The screens are real design work; the properties, prices, and review counts inside them are sample content. No claim of faster decisions or reduced cognitive load — that would require testing that has not been run.",
+    boundaryTest:
+      "What would settle it: hand someone two candidate stays and a cancellation constraint, then count the screens they open before they can answer. The whole argument here is that the answer is already on the card. That is a countable claim, and it has not been counted.",
     evidence: "solution" as EvidenceKind,
     /* The comparison / decision-flow screens now exist. What is still absent is
        a genuine before-and-after of the original structure, which is only worth

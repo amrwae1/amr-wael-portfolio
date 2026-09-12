@@ -43,7 +43,7 @@ export function SiteHeader() {
       <div className="shell flex h-16 items-center justify-between gap-6">
         <a
           href="#top"
-          className="inline-flex min-h-11 items-baseline gap-2 font-serif text-[1.4rem] leading-none tracking-[-0.03em] text-text-strong no-underline"
+          className="inline-flex min-h-11 min-w-11 items-baseline gap-2 font-serif text-[1.4rem] leading-none tracking-[-0.03em] text-text-strong no-underline"
         >
           {site.name}
           <span aria-hidden="true" className="meta hidden text-text-muted sm:inline">

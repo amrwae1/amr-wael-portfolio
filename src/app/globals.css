@@ -668,6 +668,15 @@
     pointer-events: none;
   }
 
+  /* Below the offset breakpoint the figure recentres and the claim sits on top
+     of it. Now that it is lit rather than near-black, that costs the headline
+     contrast, so it steps back and is felt rather than read. Type wins. */
+  @media (max-width: 47.99rem) {
+    .stage-figure {
+      opacity: 0.42;
+    }
+  }
+
   /* Vignette + floor gradient, so type always has ground to sit on. */
   .stage::before {
     content: "";

@@ -55,7 +55,7 @@ export function HeroStage() {
         {/* Claim, bottom-left ------------------------------------------ */}
         <div className="col-span-4 md:col-span-8 lg:col-span-7">
           <p
-            className="meta stage-fade text-text-muted"
+            className="meta stage-fade text-balance text-text-muted"
             style={{ animationDelay: "180ms" }}
           >
             {site.role} · B2B product systems · {site.location}

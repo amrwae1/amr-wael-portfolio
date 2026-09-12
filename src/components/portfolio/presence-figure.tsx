@@ -4,23 +4,26 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 /**
- * The presence — a standing figure, built as a drifting point cloud.
+ * The presence — a standing figure, lit out of the dark.
  *
  * Not a portrait and not a stock human model. The brief was "a shadow of a
  * person, the mind behind the site", and a literal photoreal body would read as
  * a purchased asset on a portfolio whose whole argument is that nothing is
  * borrowed. So the figure is generated here: points sampled through a set of
- * capsule segments in roughly male proportion, rendered darker than the colour
- * field behind them.
+ * capsule segments in roughly male proportion.
  *
- * It reads as a shadow because it *occludes* — the points are near-black and
- * sit in front of the drifting aurora, so the figure is an absence of light
- * rather than an object lit by it. A thin fresnel edge in the accent keeps the
- * silhouette from dissolving into the background entirely.
+ * The first version made it near-black against a near-black field, which is not
+ * a shadow — it is a smudge. A shadow is only legible because something else is
+ * lit. So the figure is now sculpted by light: a warm key from one side, a cool
+ * accent fresnel along the contour, and a hard fall to black everywhere the
+ * light does not reach. Most of the body is darker than it was. The parts that
+ * catch light are far brighter. The range is the point.
  *
- * Three behaviours carry the idea:
- *   · drift  — every point wanders on its own noise offset, so the body is
- *              never quite settled: thought resolving into a shape.
+ * Four behaviours carry the idea:
+ *   · flow   — points drift on a smooth field, so neighbours move together and
+ *              the body reads as a substance settling, not as static.
+ *   · sweep  — the key light turns on a slow cycle, revealing one plane of the
+ *              figure and surrendering another. It is never fully seen.
  *   · breath — a slow scale on the torso, the one cue that reads as alive.
  *   · regard — the figure turns toward the pointer, within a narrow arc. Not a
  *              turntable; it notices you and holds.
@@ -61,9 +64,16 @@ const SEGMENTS: Segment[] = [
   { a: [0.3 * H, 1.95 * H, 0], b: [0.31 * H, 0.12 * H, 0], ra: 0.17 * H, rb: 0.1 * H, weight: 9 },
 ];
 
-/** Points sampled inside the volume, denser near the surface so the edge reads. */
+/**
+ * Points sampled inside the volume, denser near the surface so the edge reads.
+ *
+ * Each point also carries the outward direction from its segment axis. That
+ * stands in for a surface normal, which is what lets the figure be lit at all —
+ * without it every point takes the same light and the body is flat again.
+ */
 function buildFigure(count: number) {
   const position = new Float32Array(count * 3);
+  const normal = new Float32Array(count * 3);
   const seed = new Float32Array(count);
   const edge = new Float32Array(count);
 
@@ -80,12 +90,24 @@ function buildFigure(count: number) {
       // crowding the surface keeps the silhouette crisp against the field.
       const shell = Math.pow(Math.random(), 0.35);
       const theta = Math.random() * Math.PI * 2;
-      // Bodies are deeper than they are wide at the torso; flatten z slightly.
       const r = radius * shell;
 
-      position[i * 3] = segment.a[0] + (segment.b[0] - segment.a[0]) * t + Math.cos(theta) * r;
-      position[i * 3 + 1] = segment.a[1] + (segment.b[1] - segment.a[1]) * t + (Math.random() - 0.5) * r * 0.4;
-      position[i * 3 + 2] = segment.a[2] + (segment.b[2] - segment.a[2]) * t + Math.sin(theta) * r * 0.78;
+      // Offset from the axis, in the cross-section of the capsule.
+      const ox = Math.cos(theta) * r;
+      const oy = (Math.random() - 0.5) * r * 0.4;
+      // Bodies are deeper than they are wide at the torso; flatten z slightly.
+      const oz = Math.sin(theta) * r * 0.78;
+
+      position[i * 3] = segment.a[0] + (segment.b[0] - segment.a[0]) * t + ox;
+      position[i * 3 + 1] = segment.a[1] + (segment.b[1] - segment.a[1]) * t + oy;
+      position[i * 3 + 2] = segment.a[2] + (segment.b[2] - segment.a[2]) * t + oz;
+
+      // Normalised outward direction. Points sitting on the axis get an
+      // arbitrary but harmless one; they are buried inside and never lit.
+      const len = Math.hypot(ox, oy, oz) || 1;
+      normal[i * 3] = ox / len;
+      normal[i * 3 + 1] = oy / len;
+      normal[i * 3 + 2] = oz / len;
 
       seed[i] = Math.random() * 100;
       edge[i] = shell;
@@ -94,14 +116,21 @@ function buildFigure(count: number) {
 
   // Any remainder from rounding lands in the torso rather than at the origin.
   for (; i < count; i++) {
-    position[i * 3] = (Math.random() - 0.5) * 0.4;
-    position[i * 3 + 1] = 4.6 * H + (Math.random() - 0.5) * 0.8;
-    position[i * 3 + 2] = (Math.random() - 0.5) * 0.3;
+    const ox = (Math.random() - 0.5) * 0.4;
+    const oy = (Math.random() - 0.5) * 0.8;
+    const oz = (Math.random() - 0.5) * 0.3;
+    position[i * 3] = ox;
+    position[i * 3 + 1] = 4.6 * H + oy;
+    position[i * 3 + 2] = oz;
+    const len = Math.hypot(ox, oy, oz) || 1;
+    normal[i * 3] = ox / len;
+    normal[i * 3 + 1] = oy / len;
+    normal[i * 3 + 2] = oz / len;
     seed[i] = Math.random() * 100;
     edge[i] = 1;
   }
 
-  return { position, seed, edge };
+  return { position, normal, seed, edge };
 }
 
 const VERTEX = /* glsl */ `
@@ -110,21 +139,36 @@ const VERTEX = /* glsl */ `
   uniform float uDrift;
   uniform float uSize;
   uniform float uPixelRatio;
+  uniform vec3  uLightDir;
 
   attribute float aSeed;
   attribute float aEdge;
 
   varying float vEdge;
   varying float vDepth;
+  varying float vKey;
+  varying float vFresnel;
+  varying float vFront;
 
   void main() {
     vec3 p = position;
 
-    // Every point wanders on its own phase — the body never fully settles.
-    float t = uTime + aSeed;
-    p.x += sin(t * 0.6) * uDrift * (0.4 + aEdge);
-    p.y += cos(t * 0.47) * uDrift * (0.4 + aEdge);
-    p.z += sin(t * 0.53 + 1.7) * uDrift * (0.4 + aEdge);
+    // Flow, not jitter. The displacement is a function of position, so
+    // neighbouring points move almost identically and the body drifts like a
+    // substance. aSeed only breaks the tie, at a tenth of the weight: enough
+    // that the surface shimmers, not so much that it dissolves into static.
+    float t = uTime * 0.22;
+    vec3 f = p * 1.35;
+    vec3 flow = vec3(
+      sin(f.y + t * 1.7) + sin(f.z * 0.8 - t * 1.1),
+      sin(f.z + t * 1.3) + sin(f.x * 0.9 + t * 0.9),
+      sin(f.x + t * 1.5) + sin(f.y * 0.7 - t * 1.3)
+    );
+    float chatter = sin(uTime * 0.9 + aSeed * 6.283);
+    // Loose points on the outer shell wander furthest, so the silhouette frays
+    // into the dark instead of ending at a line.
+    float looseness = 0.35 + aEdge * aEdge * 1.5;
+    p += (flow + chatter * 0.1) * uDrift * looseness;
 
     // Breath: the torso expands, the head and feet barely move.
     float chest = smoothstep(1.2, 2.5, p.y) * (1.0 - smoothstep(2.6, 3.1, p.y));
@@ -133,11 +177,34 @@ const VERTEX = /* glsl */ `
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
 
-    // Perspective-correct size, clamped so far points never vanish entirely.
-    gl_PointSize = uSize * uPixelRatio * (7.0 / max(-mv.z, 0.6));
+    vec3 n = normalize(normalMatrix * normal);
+    vec3 viewDir = normalize(-mv.xyz);
+
+    // How squarely the point faces the eye. Points on the far side of the body
+    // face away and must recede: without this they take a full grazing-angle
+    // fresnel and the whole figure lights up like a lantern instead of showing
+    // a contour.
+    float facing = dot(n, viewDir);
+    vFront = smoothstep(-0.5, 0.12, facing);
+
+    // Key light. Barely wrapped, so the terminator is close to true and the
+    // unlit side of the body goes genuinely black. This is where the shadow
+    // comes from — not from dimming everything, but from committing to a
+    // direction and letting most of the form fall away from it.
+    float lambert = dot(n, normalize(uLightDir));
+    vKey = pow(clamp(lambert * 0.8 + 0.2, 0.0, 1.0), 2.2) * vFront;
+
+    // Fresnel, confined to the grazing edge — this draws the silhouette and
+    // little else. abs() so a point cannot earn light by facing backwards.
+    vFresnel = pow(1.0 - abs(facing), 4.0) * vFront;
 
     vEdge = aEdge;
     vDepth = clamp((-mv.z - 2.0) / 6.0, 0.0, 1.0);
+
+    // Lit points read slightly larger. Light does this in a photograph — the
+    // bright side of a form blooms — and it gives the contour real weight.
+    float gain = 1.0 + vKey * 0.45 + vFresnel * 0.7;
+    gl_PointSize = uSize * uPixelRatio * gain * (7.0 / max(-mv.z, 0.6));
   }
 `;
 
@@ -145,25 +212,41 @@ const FRAGMENT = /* glsl */ `
   precision mediump float;
 
   uniform vec3 uShadow;
+  uniform vec3 uKey;
   uniform vec3 uRim;
 
   varying float vEdge;
   varying float vDepth;
+  varying float vKey;
+  varying float vFresnel;
+  varying float vFront;
 
   void main() {
     // Round, soft-edged points; square sprites read as noise at this density.
     vec2 uv = gl_PointCoord - 0.5;
     float d = length(uv);
     if (d > 0.5) discard;
-    float soft = 1.0 - smoothstep(0.28, 0.5, d);
+    float soft = 1.0 - smoothstep(0.24, 0.5, d);
 
-    // Only the true outer shell catches light. Anything more and the body
-    // reads as a glowing particle effect instead of a shadow with a lit contour.
-    vec3 colour = mix(uShadow, uRim, smoothstep(0.9, 1.0, vEdge) * 0.32);
+    // Only the true outer shell takes light. Interior points stay black, which
+    // is what keeps a volume from flattening into a glowing cloud.
+    float lit = smoothstep(0.55, 0.97, vEdge);
 
-    // Depth fade keeps the back of the body from crowding the front.
-    float alpha = soft * mix(1.0, 0.35, vDepth);
-    gl_FragColor = vec4(colour, alpha);
+    // Warm carries the lit plane; the accent only kisses the contour. Reversing
+    // that weighting is what turned the first attempt into a blue hologram.
+    vec3 colour = uShadow;
+    colour += uKey * vKey * lit * 1.25;
+    colour += uRim * vFresnel * lit * 0.65;
+
+    // Unlit points stay faint as well as dark: the body gains its mass from the
+    // light on it, not from a mass of dark dots. The floor is low enough that
+    // the shadowed half is felt rather than read.
+    float presence = 0.085 + lit * (vKey * 0.8 + vFresnel * 0.6);
+    // Back-facing points recede rather than vanish — a body with nothing behind
+    // its lit edge reads as a cardboard cut-out.
+    float alpha = soft * presence * mix(0.5, 1.0, vFront) * mix(1.0, 0.4, vDepth);
+
+    gl_FragColor = vec4(colour, clamp(alpha, 0.0, 1.0));
   }
 `;
 
@@ -200,21 +283,27 @@ export function PresenceFigure({ className = "" }: { className?: string }) {
 
     // Fewer points on phones: this is decoration, not content worth a frame drop.
     const count = coarse ? 12000 : 34000;
-    const { position, seed, edge } = buildFigure(count);
+    const { position, normal, seed, edge } = buildFigure(count);
 
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(position, 3));
+    geometry.setAttribute("normal", new THREE.BufferAttribute(normal, 3));
     geometry.setAttribute("aSeed", new THREE.BufferAttribute(seed, 1));
     geometry.setAttribute("aEdge", new THREE.BufferAttribute(edge, 1));
 
     const uniforms = {
       uTime: { value: 0 },
       uBreath: { value: 0 },
-      uDrift: { value: reduce ? 0.004 : 0.014 },
-      uSize: { value: coarse ? 2.6 : 2.3 },
+      uDrift: { value: reduce ? 0.004 : 0.016 },
+      uSize: { value: coarse ? 2.6 : 2.4 },
       uPixelRatio: { value: pixelRatio },
-      // Darker than the field behind it, so the figure subtracts light.
-      uShadow: { value: new THREE.Color(0x05050a) },
+      uLightDir: { value: new THREE.Vector3(-0.6, 0.35, 0.72) },
+      // Black, with the faintest cool cast. The body is an absence; everything
+      // visible about it is light landing on its surface.
+      uShadow: { value: new THREE.Color(0x040407) },
+      // Warm key, drawn down from the page's own parchment text colour.
+      uKey: { value: new THREE.Color(0xd6c9b2) },
+      // Cool contour, the accent used for every other emphasis on the site.
       uRim: { value: new THREE.Color(0xa8b5e6) },
     };
 
@@ -279,6 +368,12 @@ export function PresenceFigure({ className = "" }: { className?: string }) {
       uniforms.uTime.value = t;
       // ~13 breaths a minute, resting.
       uniforms.uBreath.value = reduce ? 0 : Math.sin(t * 1.35) * 0.5 + 0.5;
+
+      // The sweep: a ~52s cycle, slow enough that it is never caught moving,
+      // wide enough that the figure is lit from one side and then the other.
+      // This is the whole of the mystery — you are never shown all of it.
+      const sweep = reduce ? -0.7 : Math.sin(t * 0.12) * 1.15 - 0.15;
+      uniforms.uLightDir.value.set(sweep, 0.3 + Math.sin(t * 0.07) * 0.18, 0.78).normalize();
 
       yaw += (targetYaw - yaw) * 0.045;
       pitch += (targetPitch - pitch) * 0.045;

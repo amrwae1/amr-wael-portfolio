@@ -29,7 +29,7 @@ export function ApproachProofPair() {
           >
             {approach.heading}
           </h2>
-          <p className="col-span-4 self-end text-[0.95rem] leading-relaxed text-text-muted md:col-span-6 lg:col-span-4 lg:col-start-9">
+          <p className="col-span-4 self-end measure text-[0.95rem] leading-relaxed text-text-muted md:col-span-6 lg:col-span-4 lg:col-start-9">
             {approach.body}
           </p>
         </div>

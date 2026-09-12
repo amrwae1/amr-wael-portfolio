@@ -90,11 +90,12 @@ layout shift):
 ```css
 --text-meta:    clamp(0.78rem, 0.75rem + 0.12vw, 0.86rem);  /* ≥12.5px */
 --text-body:    clamp(1rem,    0.96rem + 0.18vw, 1.125rem);
---text-lead:    clamp(1.2rem,  1.08rem + 0.55vw, 1.55rem);
---text-title:   clamp(1.6rem,  1.35rem + 1.05vw, 2.25rem);
---text-project: clamp(1.9rem,  1.4rem  + 1.75vw, 3rem);
---text-chapter: clamp(2.2rem,  1.65rem + 2.2vw,  3.75rem);
+--text-lead:    clamp(1.25rem, 1.1rem  + 0.62vw, 1.6rem);
+--text-title:   clamp(1.7rem,  1.4rem  + 1.15vw, 2.4rem);
+--text-project: clamp(2rem,    1.45rem + 1.95vw, 3.25rem);
+--text-chapter: clamp(2.35rem, 1.7rem  + 2.6vw,  4rem);
 --text-hero:    clamp(2rem,    1.35rem + 2.4vw,  3.75rem);
+--text-folio:   clamp(1.7rem,  1.2rem  + 2vw,    3rem);
 ```
 
 ### Descending weight across the section
@@ -319,10 +320,45 @@ figure uses `next/image` with accurate `sizes`.
 
 ## 10. What the design deliberately avoids
 
-AI-purple, neon, glow, glassmorphism, aurora and mesh gradients; beige-and-red
-editorial clichés; oversized italic serif as instant personality; thin
-rectangular wireframe blocks; visible decorative grid lines; bento layouts and
-three equal cards; repeated left-copy/right-mockup sections; pill-heavy UI; fake
-browser chrome and device frames; excessive uppercase monospace; generic black
-CTAs; decorative charts, invented metrics, testimonials and client logos; custom
-cursors, perpetual marquees, floating particles, and motion on every object.
+AI-purple, neon, glow, aurora and mesh gradients; beige-and-red editorial
+clichés; oversized italic serif as instant personality; thin rectangular
+wireframe blocks; visible decorative grid lines; bento layouts and three equal
+cards; repeated left-copy/right-mockup sections; pill-heavy UI; fake browser
+chrome and device frames; excessive uppercase monospace; generic black CTAs;
+decorative charts, invented metrics, testimonials and client logos; perpetual
+marquees; and motion on every object.
+
+---
+
+## 11. Departures from §10, and what bounds them
+
+Three things this document originally ruled out now ship. They were added
+deliberately and each is fenced, but an undocumented departure is
+indistinguishable from drift — and a design system that contradicts the running
+product is worse than none, because it stops being a thing anyone can trust.
+Recorded here so the boundary is inspectable rather than remembered.
+
+**Glassmorphism — one element.** `.glass` / `.glass-soft` are used on exactly
+one surface: the small evidence-preview card in the hero stage. It is a plate
+seen through the stage's atmosphere, which is the one place in the page where a
+translucent material is describing something real. A second, more elaborate
+`.liquid-glass` system exists only under `/lab`, which is `noindex` and is not
+part of the portfolio's vocabulary. If glass appears on a third surface, that is
+drift and this clause has failed.
+
+**Custom cursor — pointer devices only.** `cursor-mark` replaces the pointer
+with a ring, a caret and a precise dot that change state over plates, prose and
+controls. It is a reading instrument for a page built around inspecting
+evidence, not decoration. It is gated on `(pointer: fine)`, `(hover: hover)` and
+no `prefers-reduced-motion`, and it restores the native cursor if any of those
+fail or if it does not mount. The native cursor is the fallback, never nothing.
+
+**Particles — one figure, one purpose.** The hero's standing figure is a point
+cloud. §10's objection was to floating particles as ambient decoration; this is
+a single subject, lit by a sweeping key light, standing behind the claim it
+belongs to. It pauses when the tab is hidden or the hero scrolls away, drops to
+a lower count on coarse pointers, steps back to 42% opacity below 768px so type
+wins, and degrades to the CSS light field when WebGL is unavailable.
+
+The common bound: each is one element, gated, with a working fallback, and
+carries no information. Remove any of them and the page loses nothing it needs.

@@ -40,7 +40,7 @@ export function NoonChapter() {
           {noon.proposition}
         </h3>
         <div className="col-span-4 self-end md:col-span-6 lg:col-span-4 lg:col-start-9">
-          <p className="text-[0.95rem] leading-relaxed text-text-muted">{noon.summary}</p>
+          <p className="measure text-[0.95rem] leading-relaxed text-text-muted">{noon.summary}</p>
           {/* A cautious client gets a route into the full case study. */}
           <a
             href={noon.caseStudy.href}
@@ -79,7 +79,7 @@ export function NoonChapter() {
               <dt className="meta" style={{ color: "var(--color-boundary)" }}>
                 {signal.label}
               </dt>
-              <dd className="m-0 mt-1.5 text-[0.95rem] leading-relaxed text-text">
+              <dd className="m-0 mt-1.5 measure text-[0.95rem] leading-relaxed text-text">
                 {signal.detail}
               </dd>
             </div>
@@ -97,7 +97,7 @@ export function NoonChapter() {
                 <dt className="font-serif text-lead leading-[1.3] text-text-strong">
                   {insight.title}
                 </dt>
-                <dd className="m-0 mt-2 text-[0.95rem] leading-relaxed text-text-muted">
+                <dd className="m-0 mt-2 measure text-[0.95rem] leading-relaxed text-text-muted">
                   {insight.body}
                 </dd>
               </div>
@@ -148,7 +148,7 @@ export function NoonChapter() {
             const portrait = move.figure.height > move.figure.width;
 
             return (
-              <Reveal as="li" key={move.index} className="grid-12 items-start border-t border-rule pt-8">
+              <Reveal variant="plate" as="li" key={move.index} className="grid-12 items-start border-t border-rule pt-8">
                 <div className="col-span-4 md:col-span-8 lg:col-span-4">
                   <div className="flex items-baseline gap-3">
                     <span className="numeral text-[0.95rem]">{move.index}</span>
@@ -204,7 +204,7 @@ export function NoonChapter() {
       </Reveal>
 
       <Reveal className="mt-14">
-        <BoundaryNote>{noon.boundary}</BoundaryNote>
+        <BoundaryNote test={noon.boundaryTest}>{noon.boundary}</BoundaryNote>
       </Reveal>
     </article>
   );
