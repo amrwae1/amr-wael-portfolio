@@ -1,104 +1,188 @@
-import Image from "next/image";
-import { hero, site } from "@/content/portfolio";
-import { PresenceFigure } from "./presence-figure";
+"use client";
+
+import { useEffect, useRef, useSyncExternalStore } from "react";
+import Link from "next/link";
+import { hero } from "@/content/portfolio";
 
 /**
- * The stage — a cinematic hero.
+ * The stage — one composition: footage, a short stack of words, one action.
  *
- * A full-bleed dark stage with the claim set bottom-left and a glass plate
- * bottom-right, replacing the earlier stacked hero. The evidence that used to
- * sit full-width here now opens the Valora chapter immediately below; the glass
- * plate is its doorway, showing the same screen at thumbnail scale.
+ * What was here before did too much at once: a generated point-cloud figure, a
+ * drifting light field behind it, a glass preview card floating bottom-right,
+ * and two calls to action. Each of those wanted a share of the same few
+ * seconds. This keeps the footage and the sentence, and gives the visitor
+ * exactly one place to go.
  *
- * No navigation lives here. The site already has a persistent header, and
- * repeating it inside the stage would put two navs on one page.
+ * The video is self-hosted rather than linked from the CDN it was generated on.
+ * A hero that depends on someone else's bucket staying up is a hero that breaks
+ * without warning, and the file is small enough that there is no reason to take
+ * that risk.
  *
- * Background: `stageVideo` takes a path once a video exists in `public/`. Until
- * then the CSS fallback carries it — a slow volumetric drift in the page's own
- * palette. The reference design's video was hosted on another account's CDN, so
- * it is not used: unlicensed, and it would break the moment they removed it.
+ * The video element is the source of truth for playback, not React state. It
+ * reports through `onPlay` and `onPause`, so the button always shows what is
+ * actually happening — including when autoplay is refused, which is normal on
+ * metered connections and on some mobile settings. If the file fails outright,
+ * the CSS ground underneath is already a finished background, so the hero never
+ * opens on a black rectangle.
  */
 
-/** Set to e.g. "/media/hero/stage.mp4" once a licensed video is in place. */
-const stageVideo: string | null = null;
+/** Where to park the playhead for a still frame. A moment in, past the fade. */
+const POSTER_TIME = 2.4;
 
-/* One line now. The claim used to run two — a statement plus a qualifier set
-   back a step in the text ramp — which is one clause more than a reader gives
-   the top of a page. The mask stays because the rise reads better on a single
-   line than on two, and it is the one piece of entrance motion here. */
-const CLAIM_LINES = [hero.claim];
+/** Subscribed rather than sampled, so a change of preference is honoured live. */
+function useReducedMotion() {
+  return useSyncExternalStore(
+    (notify) => {
+      const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+      query.addEventListener("change", notify);
+      return () => query.removeEventListener("change", notify);
+    },
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => false,
+  );
+}
 
 export function HeroStage() {
-  return (
-    <section id="top" className="stage" aria-labelledby="hero-heading">
-      {/* Background ----------------------------------------------------
-          Three layers, back to front: the drifting light, the figure standing
-          in it, then the stage's own vignette and grain over both. The light
-          stays even when WebGL is unavailable, so the composition never opens
-          on a flat black rectangle. */}
-      <div className="stage-fallback" aria-hidden="true" />
-      <PresenceFigure className="stage-figure" />
-      {stageVideo ? (
-        <video
-          className="stage-media"
-          autoPlay
-          muted
-          loop
-          playsInline
-          disablePictureInPicture
-          aria-hidden="true"
-        >
-          <source src={stageVideo} type="video/mp4" />
-        </video>
-      ) : null}
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  /* Set only from the button. Without it, scrolling the hero back into view
+     would restart footage the visitor deliberately stopped. */
+  const pausedByUser = useRef(false);
+  const reduce = useReducedMotion();
 
-      {/* Composition --------------------------------------------------- */}
-      <div className="shell grid-12 w-full items-end pt-24 pb-[clamp(2.125rem,5.19vh,4rem)]">
-        {/* Claim, bottom-left ------------------------------------------ */}
-        <div className="col-span-4 md:col-span-8 lg:col-span-7">
-          <p
-            className="meta stage-fade text-balance text-text-muted"
-            style={{ animationDelay: "180ms" }}
-          >
+  useEffect(() => {
+    const video = videoRef.current;
+    const section = sectionRef.current;
+    if (!video) return;
+
+    /* With reduced motion the video becomes a photograph: seek to one frame and
+       hold it. This is the poster the brief asks for, taken from the footage
+       itself rather than shipped as a second asset that could drift out of sync
+       with it. */
+    if (reduce) {
+      video.pause();
+      const settle = () => {
+        try {
+          video.currentTime = Math.min(POSTER_TIME, video.duration || POSTER_TIME);
+        } catch {
+          /* Seeking before metadata exists throws on some browsers; the
+             listener below runs once it does. */
+        }
+      };
+      if (video.readyState >= 1) settle();
+      else video.addEventListener("loadedmetadata", settle, { once: true });
+      return () => video.removeEventListener("loadedmetadata", settle);
+    }
+
+    let onScreen = true;
+
+    /* Nothing here sets React state. The element emits play/pause events and
+       the component listens to those, which keeps the button honest even when
+       the browser overrules us. */
+    const sync = () => {
+      const shouldRun = onScreen && !document.hidden && !pausedByUser.current;
+      if (shouldRun && video.paused) video.play().catch(() => {});
+      else if (!shouldRun && !video.paused) video.pause();
+    };
+
+    sync();
+
+    document.addEventListener("visibilitychange", sync);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        onScreen = entry.isIntersecting;
+        sync();
+      },
+      { threshold: 0 },
+    );
+    if (section) observer.observe(section);
+
+    return () => {
+      document.removeEventListener("visibilitychange", sync);
+      observer.disconnect();
+    };
+  }, [reduce]);
+
+  const toggle = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      pausedByUser.current = false;
+      video.play().catch(() => {});
+    } else {
+      pausedByUser.current = true;
+      video.pause();
+    }
+  };
+
+  return (
+    <section ref={sectionRef} id="top" className="stage" aria-labelledby="hero-heading">
+      {/* Ground, then footage, then the grade over both. */}
+      <div className="stage-fallback" aria-hidden="true" />
+
+      <video
+        ref={videoRef}
+        className="stage-media"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        disablePictureInPicture
+        aria-hidden="true"
+        tabIndex={-1}
+        onPlay={(e) => e.currentTarget.setAttribute("data-playing", "true")}
+        onPause={(e) => e.currentTarget.setAttribute("data-playing", "false")}
+      >
+        <source src="/media/hero/stage.mp4" type="video/mp4" />
+      </video>
+
+      {/* Composition ---------------------------------------------------
+          One stack, lower-left, held to a narrow measure so the footage keeps
+          most of the frame. */}
+      <div className="shell w-full pt-24 pb-[clamp(3rem,10vh,7rem)]">
+        <div className="max-w-[46rem]">
+          <p className="meta stage-fade text-text-muted" style={{ animationDelay: "160ms" }}>
             {hero.role}
           </p>
 
+          {/* The shadow is insurance, not styling. The scrim handles the bulk
+              of the footage, but a single bright frame passing behind a thin
+              serif stroke is exactly where legibility fails, and a shadow is
+              carried by the glyph rather than by the region behind it. */}
           <h1
             id="hero-heading"
-            className="mt-6 font-serif text-hero leading-[0.98] tracking-[-0.03em] text-text-strong"
+            className="mt-6 font-serif text-hero leading-[1.02] tracking-[-0.03em] text-text-strong"
+            style={{ textShadow: "0 1px 12px rgb(0 0 0 / 0.5), 0 1px 3px rgb(0 0 0 / 0.45)" }}
           >
-            {CLAIM_LINES.map((line, i) => (
-              <span key={line} className="line-mask">
-                <span
-                  className="line-rise"
-                  style={{ animationDelay: `${300 + i * 140}ms` }}
-                >
-                  {line}
-                </span>
+            {/* Broken where it is written to break on wide screens; on narrow
+                ones each span wraps naturally and the line box goes with it. */}
+            <span className="line-mask">
+              <span className="line-rise" style={{ animationDelay: "280ms" }}>
+                I design the decisions
               </span>
-            ))}
+            </span>
+            <span className="line-mask">
+              <span className="line-rise" style={{ animationDelay: "400ms" }}>
+                inside complex products.
+              </span>
+            </span>
           </h1>
 
-          {/* One sentence, and it is the last prose in this view. Anything more
-              is paid for out of the same seconds the headline and the button
-              need. The account of how the work is done is the Approach
-              section's job, and the proof is the three screens below it. */}
           <p
-            className="measure-tight stage-fade mt-6 text-lead leading-[1.45] text-text"
+            className="stage-fade mt-6 max-w-[34rem] text-[1.0625rem] leading-[1.5] text-text"
             style={{
-              animationDelay: "740ms",
-              textShadow: "0 1px 3px rgb(0 0 0 / 0.7)",
+              animationDelay: "620ms",
+              textShadow: "0 1px 3px rgb(0 0 0 / 0.65)",
             }}
           >
             {hero.lead}
           </p>
 
-          <div
-            className="stage-fade mt-9 flex flex-wrap items-center gap-4"
-            style={{ animationDelay: "860ms" }}
-          >
-            <a href={hero.primary.href} className="action-stage">
-              {hero.primary.label}
+          <div className="stage-fade mt-10" style={{ animationDelay: "760ms" }}>
+            <Link href="/projects" className="action-stage">
+              Explore projects
               <span className="arrow-box" aria-hidden="true">
                 <svg viewBox="0 0 14 14" className="size-3.5" fill="none">
                   <path
@@ -110,43 +194,59 @@ export function HeroStage() {
                   />
                 </svg>
               </span>
-            </a>
-            <a href={site.contactHref} className="link-rule text-[0.95rem]">
-              {site.contactLabel}
-              <span aria-hidden="true" className="arrow">
-                →
-              </span>
-            </a>
+            </Link>
           </div>
         </div>
-
-        {/* Glass plate, bottom-right ----------------------------------- */}
-        <div className="col-span-4 mt-12 md:col-span-4 md:col-start-5 lg:col-span-3 lg:col-start-10 lg:mt-0 lg:justify-self-end">
-          <a
-            href={hero.secondary.href}
-            className="stage-card-in glass group block w-full max-w-[15.5rem] rounded-[clamp(12px,1.52vh,18px)] p-[3.5%] no-underline lg:w-[clamp(172px,21vh,236px)]"
-            style={{ animationDelay: "1040ms" }}
-          >
-            <div className="relative overflow-hidden rounded-[4%] bg-[#101a1e]">
-              <Image
-                src="/media/valora/opportunity-decision-detail.webp"
-                alt="Valora opportunity detail: a prioritised issue tagged high impact and revenue risk, with its impact measures beneath."
-                width={700}
-                height={650}
-                sizes="(min-width: 1024px) 236px, 260px"
-                priority
-                className="block h-auto w-full"
-                style={{ filter: "brightness(0.89) saturate(0.93) contrast(1.03)" }}
-              />
-            </div>
-
-            <span className="glass-soft mt-[3.5%] flex min-h-[44px] items-center justify-between gap-2 whitespace-nowrap rounded-[6px] px-3 text-[0.8rem] font-normal text-text-strong transition-[filter] duration-150 group-hover:brightness-110">
-              {hero.secondary.label}
-              <span aria-hidden="true">→</span>
-            </span>
-          </a>
-        </div>
       </div>
+
+      <StageToggle onToggle={toggle} videoRef={videoRef} />
     </section>
+  );
+}
+
+/**
+ * The playback control, kept in its own component so its state can follow the
+ * element rather than the other way round. It subscribes to the video's own
+ * play and pause events, which means it stays correct when the browser refuses
+ * autoplay or pauses the tab on our behalf.
+ */
+function StageToggle({
+  onToggle,
+  videoRef,
+}: {
+  onToggle: () => void;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
+}) {
+  const playing = useSyncExternalStore(
+    (notify) => {
+      const video = videoRef.current;
+      if (!video) return () => {};
+      video.addEventListener("play", notify);
+      video.addEventListener("pause", notify);
+      return () => {
+        video.removeEventListener("play", notify);
+        video.removeEventListener("pause", notify);
+      };
+    },
+    () => !(videoRef.current?.paused ?? true),
+    () => true,
+  );
+
+  return (
+    <button type="button" onClick={onToggle} className="stage-toggle">
+      <span className="sr-only">
+        {playing ? "Pause background video" : "Play background video"}
+      </span>
+      {playing ? (
+        <svg viewBox="0 0 16 16" className="size-3.5" aria-hidden="true" fill="currentColor">
+          <rect x="4" y="3" width="3" height="10" rx="1" />
+          <rect x="9" y="3" width="3" height="10" rx="1" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 16 16" className="size-3.5" aria-hidden="true" fill="currentColor">
+          <path d="M5 3.6v8.8a.6.6 0 0 0 .92.5l6.9-4.4a.6.6 0 0 0 0-1l-6.9-4.4A.6.6 0 0 0 5 3.6Z" />
+        </svg>
+      )}
+    </button>
   );
 }

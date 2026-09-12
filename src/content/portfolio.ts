@@ -103,15 +103,9 @@ export const hero = {
   role: "Product Designer · Cairo",
   claim: "I design the decisions inside complex products.",
   lead: "Self-directed B2B and AI concepts, designed around business goals.",
-  primary: { label: "Explore projects", href: "/projects" },
-  /* The employment pathway. A résumé PDF exists in the workspace but carries a
-     phone number the site deliberately withholds, so this points at the public
-     professional record instead of publishing that. Swap the href for a hosted
-     résumé once a redacted copy is approved. */
-  secondary: {
-    label: "Experience on LinkedIn",
-    href: "https://www.linkedin.com/in/amr-wael-120596346",
-  },
+  /* The hero carries one action now, and the component names it directly.
+     The old primary/secondary pair is gone with the second CTA: a hero that
+     offers two destinations has not decided what it wants the visitor to do. */
 } as const;
 
 /* -------------------------------------------------------------------------- */

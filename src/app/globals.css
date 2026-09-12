@@ -657,64 +657,63 @@
     user-select: none;
   }
 
-  /* The no-video fallback: three slow-drifting lights over a warm ground.
-     Transform-only animation, so it never triggers layout or paint storms. */
+  /* The ground beneath the video: what shows if it is still loading, blocked,
+     or fails outright. Flat and static — it is a floor, not a second animation
+     competing with the footage on top of it. */
   .stage-fallback {
     position: absolute;
-    inset: -20%;
+    inset: 0;
     z-index: -4;
     pointer-events: none;
-    /* Lit in the page's own roles, not a separate palette. The first pass used
-       a lavender wash that read as a different site the moment you scrolled
-       past it: everything below the stage sits on a warm near-black, and the
-       accent is scarce by design. These are the same hues at a fraction of the
-       strength — enough to model the figure, never enough to become the
-       subject. */
     background:
-      /* key light, upper left — the accent, used once */
-      radial-gradient(46% 52% at 27% 24%, rgb(132 147 200 / 0.24), transparent 68%),
-      /* cool fill sweeping right, barely there */
-      radial-gradient(50% 54% at 78% 34%, rgb(151 144 184 / 0.16), transparent 70%),
-      /* warm bounce off the floor, in the intended-impact role */
-      radial-gradient(62% 48% at 54% 88%, rgb(184 154 99 / 0.13), transparent 72%),
-      /* a cold rim at the far edge, to give the space depth */
-      radial-gradient(40% 60% at 97% 72%, rgb(132 147 200 / 0.12), transparent 70%),
+      radial-gradient(58% 60% at 32% 34%, rgb(132 147 200 / 0.12), transparent 72%),
+      radial-gradient(60% 50% at 68% 78%, rgb(184 154 99 / 0.08), transparent 74%),
       #0b0b0a;
-    filter: blur(56px) saturate(128%);
-    animation: stage-drift 34s ease-in-out infinite alternate;
   }
 
-  @keyframes stage-drift {
-    from {
-      transform: translate3d(-2%, -1%, 0) scale(1.04);
+  /* Focal position. The footage is 16:9 and the type sits lower-left, so the
+     crop is pushed right and up on wide screens to keep the moving subject out
+     from behind the headline. On a tall phone the frame has nowhere to go
+     sideways, so it holds centre and the scrim does the work instead. */
+  @media (min-width: 48rem) {
+    .stage-media {
+      object-position: 68% 42%;
     }
-    to {
-      transform: translate3d(2.5%, 1.5%, 0) scale(1.12);
-    }
   }
 
-  /* The figure's canvas. Sits above the drifting light and below the vignette
-     and grain, so it is lit by the stage and then graded with it — which is
-     what keeps it in the scene rather than pasted on top of it. */
-  .stage-figure {
-    position: absolute;
-    inset: 0;
-    z-index: -3;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-
-  /* Below the offset breakpoint the figure recentres and the claim sits on top
-     of it. Now that it is lit rather than near-black, that costs the headline
-     contrast, so it steps back and is felt rather than read. Type wins. */
+  /* Narrow screens need a heavier floor, and the measurements say so rather
+     than the eye: with the crop centred, the brightest frames put the subject
+     directly behind the text, and the desktop scrim left the headline at
+     2.69:1 and the supporting line at 3.11:1 — both under their thresholds.
+     This band only exists below the breakpoint, so the wide composition keeps
+     its contrast in the footage. */
   @media (max-width: 47.99rem) {
-    .stage-figure {
-      opacity: 0.42;
+    .stage::before {
+      background:
+        linear-gradient(
+          180deg,
+          rgb(7 7 10 / 0.38) 0%,
+          rgb(7 7 10 / 0.1) 16%,
+          rgb(7 7 10 / 0.2) 34%,
+          rgb(7 7 10 / 0.78) 62%,
+          rgb(7 7 10 / 0.93) 84%,
+          rgb(7 7 10 / 0.96) 100%
+        ),
+        radial-gradient(ellipse at 50% 34%, transparent 30%, rgb(0 0 0 / 0.4) 100%);
     }
   }
 
-  /* Vignette + floor gradient, so type always has ground to sit on. */
+  /* Vignette + floor gradient, so type always has ground to sit on.
+     Weighted to the lower-left corner, where the text stack lives: the darkest
+     part of the treatment is exactly under the words, and the rest of the frame
+     keeps its contrast rather than being flattened to make one corner legible.
+
+     The weighting is not a taste decision. Sampling the footage behind the
+     headline across playback gives an average luminance that clears AA
+     comfortably, but the brightest pixels in some frames reach effectively
+     white — a contrast of about 1:1 against the type. An average is the wrong
+     measure for a moving background; the floor is what decides readability, so
+     the corner scrim is sized against the worst frame rather than the mean. */
   .stage::before {
     content: "";
     position: absolute;
@@ -722,15 +721,25 @@
     z-index: -2;
     pointer-events: none;
     background:
+      /* The floor, and a lift off the top edge for the header. */
       linear-gradient(
         180deg,
-        rgb(7 7 10 / 0.3) 0%,
-        rgb(7 7 10 / 0.06) 22%,
-        transparent 44%,
-        rgb(7 7 10 / 0.62) 88%,
-        rgb(7 7 10 / 0.8) 100%
+        rgb(7 7 10 / 0.34) 0%,
+        rgb(7 7 10 / 0.08) 20%,
+        transparent 38%,
+        rgb(7 7 10 / 0.72) 82%,
+        rgb(7 7 10 / 0.9) 100%
       ),
-      radial-gradient(ellipse at 40% 46%, transparent 34%, rgb(0 0 0 / 0.46) 100%);
+      /* The corner the words occupy, carried well past them so the edge of the
+         scrim never becomes a visible shape. */
+      radial-gradient(
+        120% 95% at 0% 100%,
+        rgb(7 7 10 / 0.82) 0%,
+        rgb(7 7 10 / 0.52) 34%,
+        rgb(7 7 10 / 0.18) 62%,
+        transparent 80%
+      ),
+      radial-gradient(ellipse at 46% 42%, transparent 38%, rgb(0 0 0 / 0.42) 100%);
   }
 
   /* A fine grain keeps the large flat gradients from banding. */
@@ -843,32 +852,42 @@
     }
   }
 
-  .stage-card-in {
-    animation: stage-card 920ms cubic-bezier(0.22, 1, 0.36, 1) both;
-    transform-origin: 82% 50%;
+  /* The playback control. Deliberately the quietest interactive thing on the
+     page: it sits in the corner opposite the text, carries no label until it is
+     reached, and is the only control in the hero besides the one action. */
+  .stage-toggle {
+    position: absolute;
+    z-index: 2;
+    right: var(--spacing-margin);
+    bottom: clamp(1.25rem, 3vh, 2rem);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid rgb(255 255 255 / 0.18);
+    background-color: rgb(7 7 10 / 0.42);
+    color: rgb(241 234 223 / 0.82);
+    backdrop-filter: blur(6px);
+    transition:
+      border-color 160ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 160ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 160ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  @keyframes stage-card {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 12px, 0) scale(0.968);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
+  .stage-toggle:hover,
+  .stage-toggle:focus-visible {
+    border-color: rgb(255 255 255 / 0.34);
+    background-color: rgb(7 7 10 / 0.62);
+    color: var(--color-text-strong);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stage-fallback {
-    animation: none;
-  }
-
   /* The rise and the clip are dropped; a short fade is all that remains. */
   .line-rise,
-  .stage-fade,
-  .stage-card-in {
+  .stage-fade {
     animation: stage-fade 200ms ease both !important;
     transform: none !important;
   }
