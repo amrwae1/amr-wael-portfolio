@@ -3,7 +3,6 @@ import { CursorMark } from "@/components/portfolio/cursor-mark";
 import { SiteHeader } from "@/components/portfolio/site-header";
 import { HeroStage } from "@/components/portfolio/hero-stage";
 import { EvidenceBlock } from "@/components/portfolio/evidence-block";
-import { ApproachProofPair } from "@/components/portfolio/approach-proof-pair";
 import { ContactInvitation } from "@/components/portfolio/contact-invitation";
 import { Reveal } from "@/components/portfolio/reveal";
 import { homeEvidence } from "@/content/projects";
@@ -76,7 +75,51 @@ export default function Home() {
           </Reveal>
         </section>
 
-        <ApproachProofPair />
+        {/* About, in preview ------------------------------------------------
+            Deliberately after the work and deliberately short. A reviewer who
+            is still reading at this point has decided the projects are worth
+            something; that is the moment a sentence about the person lands,
+            and not before. The Approach section that used to sit here said the
+            same thing at four times the length and is now the About page. */}
+        <section
+          id="about"
+          aria-labelledby="about-preview-heading"
+          className="shell scroll-mt-24 pb-[var(--space-section)]"
+        >
+          <Reveal className="border-t border-rule pt-8">
+            <div className="flex items-baseline gap-x-6">
+              <p className="meta">About</p>
+              <span className="rule-fill" aria-hidden="true" />
+            </div>
+
+            <div className="grid-12 mt-[var(--space-related)]">
+              <h2
+                id="about-preview-heading"
+                className="col-span-4 text-title leading-[1.2] tracking-[-0.02em] text-text-strong md:col-span-8 lg:col-span-5"
+              >
+                Two years watching people decide things under pressure, then
+                designing for it.
+              </h2>
+
+              <div className="col-span-4 md:col-span-8 lg:col-span-6 lg:col-start-7">
+                <p className="measure text-text">
+                  I work in B2B sales and customer operations at Concentrix,
+                  supporting US business customers through purchasing and account
+                  decisions. It is not a design job. It is where the problem I
+                  design for became obvious.
+                </p>
+
+                <Link href="/about" className="link-rule mt-7 text-[0.95rem]">
+                  More about me
+                  <span aria-hidden="true" className="arrow">
+                    →
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+        </section>
+
         <ContactInvitation />
       </main>
 

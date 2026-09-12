@@ -87,7 +87,7 @@ export const homeEvidence: EvidenceBlock[] = [
       "Comparison is the real task. Making someone rebuild it from memory across two screens is the friction worth removing.",
     figure: {
       src: "/media/booking/listing-results.webp",
-      alt: "The Booking.com redesign concept: each property card carries its review score, nightly price, area and distance from downtown.",
+      alt: "The Booking.com redesign concept: each property card carries its review score, nightly price, area and a distance, though the reference point differs between cards.",
       width: 1200,
       height: 1600,
     },
@@ -193,11 +193,11 @@ export const projectCards: ProjectCard[] = [
     role: "Product design, interaction, visual design",
     standing: "Self-directed concept",
     challenge:
-      "Two questions normally wait until checkout: what the stay actually costs once taxes and fees are added, and whether it can be cancelled. Both had to move forward without burying the card.",
+      "Two questions normally wait until checkout: what the stay actually costs with taxes and fees, and whether it can be cancelled. Both had to move forward without burying the card.",
     proof:
       "A result card that carries the comparison, and an expanded state that resolves cost and cancellation in place.",
     limit:
-      "Properties, prices and review counts are sample content. No claim of faster decisions or reduced cognitive load.",
+      "Sample content, and unfinished: the distance reference is inconsistent between cards, so the comparison the design promises does not fully hold yet. No claim of faster decisions.",
     limitTest:
       "Hand someone two candidate stays and a cancellation constraint, then count the screens they open before they can answer. The whole argument is that the answer is already on the card — that is countable, and it has not been counted.",
     href: "/projects/booking",

@@ -267,14 +267,14 @@ export const caseStudies: CaseStudy[] = [
     decisions: [
       {
         heading: "The card carries the comparison",
-        body: "Each property holds its review score, nightly price, area and distance from downtown on the card itself, using the same reference point across every result so two candidates can be read against each other in place.",
+        body: "Each property carries its review score, nightly price, area and distance on the card itself, so two candidates can be weighed without opening either one. The screens also show where this is not finished: one card measures from downtown and the next from the traveller, and a distance that changes what it is measured against is not a comparison. Fixing that is the first thing the concept needs.",
         figure: {
           src: "/media/booking/listing-results.webp",
           width: 1200,
           height: 1600,
           evidence: "solution",
           caption: "Results, comparable in place",
-          alt: "The Booking.com redesign concept: each property card carries its review score, nightly price, area, and distance from downtown, measured from the same reference point.",
+          alt: "The Booking.com redesign concept. Each property card carries a review score, nightly price and area. The first card reads eighteen point six kilometres from downtown; the second reads distance from you, four hundred and fifty metres — two different reference points.",
         },
       },
       {
@@ -293,10 +293,10 @@ export const caseStudies: CaseStudy[] = [
     constraints: [
       "An unsolicited redesign has no access to the business rules behind the original — rate parity, partner terms, ranking incentives — so the work stays at the level of information structure rather than claiming to improve the business model.",
       "The comparison had to improve without the card growing. More information on a taller card is not a better comparison, it is a longer scroll.",
-      "Distance and location needed one consistent reference point across all results, or the comparison the card promises does not actually hold.",
+      "A card that promises comparison has to measure every result the same way. These screens do not yet: the reference point changes between cards, which is a real gap in the concept rather than a detail of the visual design.",
     ],
     delivered: [
-      "A result card carrying score, price, area and distance against a shared reference point",
+      "A result card carrying score, price, area and distance, with the reference point still inconsistent between results",
       "An expanded state resolving total cost and cancellation terms in place",
       "A dimming treatment that holds the list context while one result is open",
     ],

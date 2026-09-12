@@ -8,10 +8,16 @@
 
 @theme {
   /* Ground and surfaces ---------------------------------------------------- */
-  --color-canvas: #11110f;
-  --color-surface-1: #181815;
-  --color-surface-2: #20201c;
-  --color-surface-3: #282721;
+  /* True black ground. The surfaces above it are near-black and warm rather
+     than grey: a neutral lift off pure black reads as a mistake next to it,
+     where a trace of warmth reads as the same material under more light. They
+     are deliberately close together — separation on this site comes from space
+     and type, and a surface only exists where something has to be physically
+     distinct, like the mat behind a light screenshot. */
+  --color-canvas: #000000;
+  --color-surface-1: #0b0b0a;
+  --color-surface-2: #141311;
+  --color-surface-3: #1c1a17;
 
   /* Text ------------------------------------------------------------------- */
   --color-text-strong: #f1eadf;
@@ -19,7 +25,7 @@
   --color-text-muted: #9f988c;
 
   /* Structure -------------------------------------------------------------- */
-  --color-rule: #37352f;
+  --color-rule: #2a2824;
 
   /* Action and semantics --------------------------------------------------- */
   --color-accent: #8493c8;
@@ -314,7 +320,13 @@
   .nav-link {
     display: inline-flex;
     align-items: center;
+    /* Both axes. The height was already here; a short label like "Work" still
+       left a target under 44px wide, which is the axis that actually fails for
+       a horizontal nav. Centring means the shorter labels gain the space
+       symmetrically and nothing moves visually. */
     min-height: 44px;
+    min-width: 44px;
+    justify-content: center;
     color: var(--color-text);
     text-decoration: none;
     background-image: linear-gradient(
@@ -640,7 +652,7 @@
     flex-direction: column;
     justify-content: flex-end;
     overflow: clip;
-    background-color: #0b0b0a;
+    background-color: var(--color-canvas);
   }
 
   /* --- Background layers ------------------------------------------------ */
@@ -668,7 +680,7 @@
     background:
       radial-gradient(58% 60% at 32% 34%, rgb(132 147 200 / 0.12), transparent 72%),
       radial-gradient(60% 50% at 68% 78%, rgb(184 154 99 / 0.08), transparent 74%),
-      #0b0b0a;
+      #000000;
   }
 
   /* Focal position. The footage is 16:9 and the type sits lower-left, so the
@@ -890,5 +902,56 @@
   .stage-fade {
     animation: stage-fade 200ms ease both !important;
     transform: none !important;
+  }
+}
+
+/* ==========================================================================
+   The header
+   Two states, one element. Over the hero it is a transparent overlay on the
+   footage — no strip, no frame, no blur — with only a soft top scrim so the
+   links stay readable as the video moves beneath them. Past the hero there is
+   nothing behind it, so it takes the page's black and draws a hairline.
+
+   The transition is on colour alone. Nothing about the header's box changes
+   between states, so the links never move under the pointer.
+   ========================================================================== */
+
+@layer components {
+  .site-header {
+    background-color: transparent;
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* The scrim, not a bar: it fades out entirely well before the header's lower
+     edge, so there is no visible band sitting on the video. */
+  .site-header::before {
+    content: "";
+    position: absolute;
+    inset: -1px 0 auto 0;
+    height: 160%;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgb(0 0 0 / 0.62) 0%,
+      rgb(0 0 0 / 0.34) 42%,
+      transparent 100%
+    );
+    opacity: 1;
+    transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .site-header[data-lifted] {
+    background-color: var(--color-canvas);
+    border-bottom-color: var(--color-rule);
+  }
+
+  /* Past the hero the page's own black is behind the header, so the scrim has
+     nothing left to do. */
+  .site-header[data-lifted]::before {
+    opacity: 0;
   }
 }

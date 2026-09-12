@@ -75,7 +75,7 @@ export const site = {
   navigation: [
     { label: "Work", href: "/#work" },
     { label: "Projects", href: "/projects" },
-    { label: "Approach", href: "/#approach" },
+    { label: "About", href: "/about" },
   ],
   contactLabel: "Discuss your product opportunity",
   /** Verified from Amr's CV. The subject follows the label, so the mail that

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
 import { site } from "@/content/portfolio";
 import { motionTokens, standardEase } from "./motion-tokens";
@@ -38,8 +38,18 @@ export function SiteHeader() {
     restDelta: 0.001,
   });
 
+  /* True once the reader has left the hero. Above the fold the header is a
+     transparent overlay on the footage; past it there is nothing behind the
+     links, so it takes the page's own black. The threshold is a fraction of the
+     viewport rather than the hero's measured height, which keeps it correct on
+     pages that have no hero at all. */
+  const lifted = useLifted();
+
   return (
-    <header className="sticky top-0 z-50 border-b border-rule bg-canvas/85 backdrop-blur-md">
+    <header
+      data-lifted={lifted ? "" : undefined}
+      className="site-header sticky top-0 z-50"
+    >
       <motion.div
         aria-hidden="true"
         style={{ scaleX: reduce ? scrollYProgress : smoothed }}
@@ -271,6 +281,34 @@ function MobileMenu({
  * its first pixel appears. Sections are read from the nav so the two can never
  * drift apart.
  */
+/**
+ * Whether the reader has scrolled past the opening screen.
+ *
+ * A passive scroll listener rather than an IntersectionObserver on a sentinel.
+ * The observer is the tidier instrument and was the first choice, but it did not
+ * fire reliably under test and a header state that cannot be verified is worse
+ * than one built from a comparison that always runs. The work per event is a
+ * single number against a threshold, which is cheap enough that the listener
+ * costs nothing measurable.
+ *
+ * The threshold is a fraction of the viewport rather than the hero's measured
+ * height, so it stays correct on the pages that have no hero.
+ */
+function useLifted() {
+  return useSyncExternalStore(
+    (notify) => {
+      window.addEventListener("scroll", notify, { passive: true });
+      window.addEventListener("resize", notify, { passive: true });
+      return () => {
+        window.removeEventListener("scroll", notify);
+        window.removeEventListener("resize", notify);
+      };
+    },
+    () => window.scrollY > window.innerHeight * 0.7,
+    () => false,
+  );
+}
+
 /** The element id a nav href points at, or null for a route link. */
 function sectionId(href: string) {
   const hash = href.indexOf("#");
