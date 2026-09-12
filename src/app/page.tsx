@@ -1,9 +1,10 @@
 import { CursorMark } from "@/components/portfolio/cursor-mark";
 import { SiteHeader } from "@/components/portfolio/site-header";
-import { ImpactHero } from "@/components/portfolio/impact-hero";
+import { HeroStage } from "@/components/portfolio/hero-stage";
 import { ValoraChapter } from "@/components/portfolio/valora-chapter";
 import { ChapterTransition } from "@/components/portfolio/chapter-transition";
 import { SelectedWork } from "@/components/portfolio/selected-work";
+import { EngagementInvite } from "@/components/portfolio/engagement-invite";
 import { ApproachProofPair } from "@/components/portfolio/approach-proof-pair";
 import { ContactInvitation } from "@/components/portfolio/contact-invitation";
 
@@ -18,7 +19,7 @@ export default function Home() {
       <SiteHeader />
 
       <main id="main">
-        <ImpactHero />
+        <HeroStage />
         <ValoraChapter />
 
         {/* Used once, to mark the move from flagship depth to shorter work. */}
@@ -27,6 +28,11 @@ export default function Home() {
         </ChapterTransition>
 
         <SelectedWork />
+
+        {/* Catches a reader the work has already convinced, before the method
+            section asks them for more attention. */}
+        <EngagementInvite />
+
         <ApproachProofPair />
         <ContactInvitation />
       </main>

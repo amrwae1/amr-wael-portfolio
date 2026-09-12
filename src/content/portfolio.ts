@@ -61,6 +61,12 @@ export const hero = {
   claim: "I design product solutions around the business outcomes that matter.",
   support:
     "I work through the layers behind a problem — context, constraints, and product systems — to find the approach that holds, then make it clear and usable.",
+  /**
+   * The stage's one line. `support` is the full account and still reads on any
+   * layout that has room for it; this is what the hero can carry at a glance.
+   * Both say the same thing, so they can never contradict each other.
+   */
+  lead: "B2B product systems, worked back from the outcome that has to move — and the evidence behind it.",
   primary: { label: "Explore Valora", href: "#valora" },
   secondary: { label: "View selected work", href: "#work" },
   /** The sequence the hero figure already demonstrates, read left to right. */
