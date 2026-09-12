@@ -146,10 +146,23 @@ export default function About() {
           <p className="measure mt-4 text-text">{about.contact.body}</p>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
-            <a href={site.contactHref} className="action action-primary">
+            <Link href={site.contactHref} className="action action-primary">
               {site.contactLabel}
               <span aria-hidden="true" className="arrow">
                 →
+              </span>
+            </Link>
+
+            <a
+              href={site.resume.href}
+              target="_blank"
+              rel="noreferrer"
+              className="link-rule text-[0.95rem]"
+            >
+              {site.resume.label}
+              <span className="sr-only"> (opens in a new tab)</span>
+              <span aria-hidden="true" className="arrow">
+                ↗
               </span>
             </a>
 

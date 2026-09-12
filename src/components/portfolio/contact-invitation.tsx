@@ -1,4 +1,5 @@
 import { contact, site } from "@/content/portfolio";
+import Link from "next/link";
 import { Reveal } from "./reveal";
 
 /**
@@ -35,12 +36,12 @@ export function ContactInvitation() {
           <p className="measure mt-7 text-lead leading-[1.45] text-text">{contact.body}</p>
 
           <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <a href={site.contactHref} className="action action-primary">
+            <Link href={site.contactHref} className="action action-primary">
               {site.contactLabel}
               <span aria-hidden="true" className="arrow">
                 →
               </span>
-            </a>
+            </Link>
             <a href={`mailto:${contact.email}`} className="link-rule text-[0.95rem]">
               {contact.email}
             </a>

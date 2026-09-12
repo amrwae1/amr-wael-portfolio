@@ -166,12 +166,12 @@ export default function Projects() {
           <h2 className="text-title leading-[1.15] tracking-[-0.02em] text-text-strong">
             Have a problem shaped like one of these?
           </h2>
-          <a href={site.contactHref} className="action action-primary mt-6">
+          <Link href={site.contactHref} className="action action-primary mt-6">
             {site.contactLabel}
             <span aria-hidden="true" className="arrow">
               →
             </span>
-          </a>
+          </Link>
         </Reveal>
       </main>
 

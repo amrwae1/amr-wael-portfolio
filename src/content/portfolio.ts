@@ -18,23 +18,23 @@ export const evidenceMeta: Record<
   { label: string; description: string; token: string }
 > = {
   reasoning: {
-    label: "Reasoning proof",
-    description: "Analysis, constraints, and logic behind the approach.",
+    label: "Key decision",
+    description: "The choice made, and the reasoning it rests on.",
     token: "var(--color-reasoning)",
   },
   solution: {
-    label: "Solution proof",
-    description: "Screens, flows, and systems that were actually designed.",
+    label: "Design evidence",
+    description: "Screens, flows and systems that were actually designed.",
     token: "var(--color-accent)",
   },
   outcome: {
-    label: "Outcome proof",
+    label: "Measured outcome",
     description: "A measured or independently supported result.",
     token: "var(--color-text-strong)",
   },
   intended: {
-    label: "Intended impact",
-    description: "The effect the design is built to produce, not yet measured.",
+    label: "Intended value",
+    description: "The effect the design is built to produce. Not measured.",
     token: "var(--color-intended)",
   },
 };
@@ -70,17 +70,33 @@ export const site = {
   role: "Product Designer",
   fullName: "Amr Wael",
   location: "Cairo",
-  /* Anchors are absolute so the header works from /projects too, where no
-     #work or #approach element exists. */
+  /* Anchors are absolute so the header works from every route, not only the
+     one that happens to contain the section. */
   navigation: [
     { label: "Work", href: "/#work" },
     { label: "Projects", href: "/projects" },
     { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
   ],
+
+  /* The long label is right where there is room for a sentence; the short one
+     is for the header, where a four-word button crowds the nav. Both go to the
+     same place. */
   contactLabel: "Discuss your product opportunity",
-  /** Verified from Amr's CV. The subject follows the label, so the mail that
-      arrives is named the same way the button that sent it was. */
-  contactHref: "mailto:amrwael322@gmail.com?subject=A%20product%20opportunity",
+  contactLabelShort: "Start a conversation",
+
+  /* Every call to action now lands on a page rather than opening a blank mail
+     window. A mailto asks the visitor to compose the message themselves, from
+     nothing, which is the point most of them stop. */
+  contactHref: "/contact",
+
+  email: "amrwael322@gmail.com",
+
+  /** Verified: the file in `public/` is the CV Amr supplied, unaltered. */
+  resume: {
+    href: "/Amr-Wael-Product-Designer-CV.pdf",
+    label: "Résumé (PDF)",
+  },
 } as const;
 
 /**

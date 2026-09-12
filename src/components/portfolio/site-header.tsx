@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import Link from "next/link";
 import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
 import { site } from "@/content/portfolio";
 import { motionTokens, standardEase } from "./motion-tokens";
@@ -56,16 +57,16 @@ export function SiteHeader() {
         className="absolute inset-x-0 -bottom-px h-px origin-left bg-accent-strong/70"
       />
       <div className="shell flex h-16 items-center justify-between gap-6">
-        <a
-          href="#top"
+        <Link
+          href="/"
           className="inline-flex min-h-11 min-w-11 items-baseline gap-2 font-serif text-[1.4rem] leading-none tracking-[-0.03em] text-text-strong no-underline"
         >
           {site.name}
           <span aria-hidden="true" className="meta hidden text-text-muted sm:inline">
             {site.role}
           </span>
-          <span className="sr-only"> — {site.role}, back to top</span>
-        </a>
+          <span className="sr-only"> — {site.role}, home</span>
+        </Link>
 
         {/* Desktop ------------------------------------------------------- */}
         <nav aria-label="Primary" className="hidden items-center gap-8 md:flex">
@@ -79,12 +80,12 @@ export function SiteHeader() {
               {item.label}
             </a>
           ))}
-          <a href={site.contactHref} className="action action-primary">
-            {site.contactLabel}
+          <Link href={site.contactHref} className="action action-primary">
+            {site.contactLabelShort}
             <span aria-hidden="true" className="arrow">
               →
             </span>
-          </a>
+          </Link>
         </nav>
 
         {/* Mobile -------------------------------------------------------- */}
@@ -259,12 +260,12 @@ function MobileMenu({
               ))}
             </nav>
 
-            <a href={site.contactHref} onClick={onClose} className="action action-primary mt-6">
-              {site.contactLabel}
+            <Link href={site.contactHref} onClick={onClose} className="action action-primary mt-6">
+              {site.contactLabelShort}
               <span aria-hidden="true" className="arrow">
                 →
               </span>
-            </a>
+            </Link>
         </motion.div>
       ) : null}
     </>

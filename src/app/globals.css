@@ -955,3 +955,53 @@
     opacity: 0;
   }
 }
+
+/* ==========================================================================
+   Form fields
+   One treatment, used by the contact form. Built from the same materials as
+   the rest of the site — a rule, a surface one step off black, and the shared
+   focus ring — so a form does not arrive looking like a different product.
+   ========================================================================== */
+
+@layer components {
+  .field {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--color-rule);
+    border-radius: 6px;
+    background-color: var(--color-surface-1);
+    color: var(--color-text-strong);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    transition:
+      border-color 160ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .field::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  .field:hover {
+    border-color: var(--color-text-muted);
+  }
+
+  .field:focus-visible {
+    border-color: var(--color-accent-strong);
+    background-color: var(--color-surface-2);
+  }
+
+  /* The browser's own validity styling, kept quiet: the boundary colour marks
+     the field only once the visitor has actually tried to submit it. */
+  .field:user-invalid {
+    border-color: var(--color-boundary);
+  }
+
+  textarea.field {
+    resize: vertical;
+    min-height: 8rem;
+  }
+}
