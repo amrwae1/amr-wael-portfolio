@@ -22,9 +22,11 @@ import { PresenceFigure } from "./presence-figure";
 /** Set to e.g. "/media/hero/stage.mp4" once a licensed video is in place. */
 const stageVideo: string | null = null;
 
-/* The claim, broken where it wants to break. The second line is set back so the
-   first reads as the statement and the second as its qualifier. */
-const CLAIM_LINES = ["I design product solutions", "around the business outcomes that matter."];
+/* One line now. The claim used to run two — a statement plus a qualifier set
+   back a step in the text ramp — which is one clause more than a reader gives
+   the top of a page. The mask stays because the rise reads better on a single
+   line than on two, and it is the one piece of entrance motion here. */
+const CLAIM_LINES = [hero.claim];
 
 export function HeroStage() {
   return (
@@ -58,7 +60,7 @@ export function HeroStage() {
             className="meta stage-fade text-balance text-text-muted"
             style={{ animationDelay: "180ms" }}
           >
-            {site.role} · B2B product systems · {site.location}
+            {hero.role}
           </p>
 
           <h1
@@ -69,11 +71,7 @@ export function HeroStage() {
               <span key={line} className="line-mask">
                 <span
                   className="line-rise"
-                  style={{
-                    animationDelay: `${300 + i * 140}ms`,
-                    /* The qualifier sits back a step in the text ramp. */
-                    color: i === 1 ? "var(--color-text)" : undefined,
-                  }}
+                  style={{ animationDelay: `${300 + i * 140}ms` }}
                 >
                   {line}
                 </span>
@@ -81,11 +79,10 @@ export function HeroStage() {
             ))}
           </h1>
 
-          {/* One line, not a paragraph. The stage has to be read at a glance,
-              and the full account of how the work is done is the Approach
-              section's job. The five-step sequence that used to sit here was
-              labelling a plate that is no longer in this view — the Valora
-              chapter below walks the same sequence with the screens beside it. */}
+          {/* One sentence, and it is the last prose in this view. Anything more
+              is paid for out of the same seconds the headline and the button
+              need. The account of how the work is done is the Approach
+              section's job, and the proof is the three screens below it. */}
           <p
             className="measure-tight stage-fade mt-6 text-lead leading-[1.45] text-text"
             style={{

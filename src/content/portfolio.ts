@@ -70,9 +70,12 @@ export const site = {
   role: "Product Designer",
   fullName: "Amr Wael",
   location: "Cairo",
+  /* Anchors are absolute so the header works from /projects too, where no
+     #work or #approach element exists. */
   navigation: [
-    { label: "Work", href: "#work" },
-    { label: "Approach", href: "#approach" },
+    { label: "Work", href: "/#work" },
+    { label: "Projects", href: "/projects" },
+    { label: "Approach", href: "/#approach" },
   ],
   contactLabel: "Discuss your product opportunity",
   /** Verified from Amr's CV. The subject follows the label, so the mail that
@@ -80,37 +83,28 @@ export const site = {
   contactHref: "mailto:amrwael322@gmail.com?subject=A%20product%20opportunity",
 } as const;
 
+/**
+ * The hero, cut to what a recruiter needs in the first five seconds.
+ *
+ * It previously ran a claim plus a two-sentence lead — the positioning, the
+ * method, and the authorship note all competing in the same breath. A reviewer
+ * giving the page seconds reads the first line and the button; everything else
+ * is paid for out of the same attention budget.
+ *
+ * So: role line, one headline, one supporting sentence, two actions. The
+ * authorship point survives because it answers the most common reason a
+ * portfolio gets discounted, but it is now four words inside the role line
+ * rather than a clause at the end of a paragraph.
+ */
 export const hero = {
-  claim: "I design product solutions around the business outcomes that matter.",
+  /** Kept for the social card and any surface with room for the long form. */
   support:
     "I work through the layers behind a problem — context, constraints, and product systems — to find the approach that holds, then make it clear and usable.",
-  /**
-   * The stage's one line. `support` is the full account and still reads on any
-   * layout that has room for it; this is what the hero can carry at a glance.
-   * Both say the same thing, so they can never contradict each other.
-   */
-  /*
-   * The second sentence states sole authorship once, at the top.
-   *
-   * Every project here is self-directed, and each one says so in its own words
-   * further down — but a reader who never reaches those three separate mentions
-   * has no way to know. Unclear personal contribution is the most consistent
-   * reason a portfolio gets discounted, because a reviewer who cannot tell what
-   * was yours assumes the weakest reading. Having no team to share credit with
-   * removes that doubt entirely, which makes it a strength worth claiming
-   * rather than a fact to leave implicit.
-   */
-  lead: "B2B product systems, worked back from the outcome that has to move — and the evidence behind it. Every project here is self-directed, so every decision inside them is mine to defend.",
-  primary: { label: "Explore Valora", href: "#valora" },
-  secondary: { label: "View selected work", href: "#work" },
-  /** The sequence the hero figure already demonstrates, read left to right. */
-  sequence: [
-    "Prioritized issue",
-    "Supporting evidence",
-    "Business relevance",
-    "Recommended direction",
-    "Plan",
-  ],
+  role: "Product Designer · B2B and AI products · Cairo",
+  claim: "I design the decisions inside complex products.",
+  lead: "Self-directed work on decision-heavy B2B and AI interfaces, built back from the business outcome that has to move.",
+  primary: { label: "See the work", href: "#work" },
+  secondary: { label: "All projects", href: "/projects" },
 } as const;
 
 /* -------------------------------------------------------------------------- */
@@ -473,7 +467,7 @@ export const karmaShop = {
 
 export const approach = {
   heading: "The story changes with every problem. The logic underneath does not.",
-  body: "This is not a method I apply to a brief. It is what the four projects above already do, described in order.",
+  body: "Not a method applied to a brief. It is what the work already does, described in order.",
   steps: [
     {
       index: "01",
@@ -506,7 +500,7 @@ export const approach = {
     {
       index: "05",
       title: "State where the evidence stops",
-      body: "Karma Shop is listed as upcoming rather than dressed up as a case study, and no project here claims a result it has not measured. The boundary is part of the work.",
+      body: "Karma Shop is listed as upcoming rather than dressed up as a case study, and no project claims a result it has not measured. The boundary is part of the work.",
       project: "Karma Shop",
       href: "#karma-shop",
     },

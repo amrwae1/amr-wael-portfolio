@@ -1,13 +1,26 @@
+import Link from "next/link";
 import { CursorMark } from "@/components/portfolio/cursor-mark";
 import { SiteHeader } from "@/components/portfolio/site-header";
 import { HeroStage } from "@/components/portfolio/hero-stage";
-import { ValoraChapter } from "@/components/portfolio/valora-chapter";
-import { ChapterTransition } from "@/components/portfolio/chapter-transition";
-import { SelectedWork } from "@/components/portfolio/selected-work";
-import { EngagementInvite } from "@/components/portfolio/engagement-invite";
+import { EvidenceBlock } from "@/components/portfolio/evidence-block";
 import { ApproachProofPair } from "@/components/portfolio/approach-proof-pair";
 import { ContactInvitation } from "@/components/portfolio/contact-invitation";
+import { Reveal } from "@/components/portfolio/reveal";
+import { homeEvidence } from "@/content/projects";
 
+/**
+ * The home page: a landing page, not a collection of case studies.
+ *
+ * It used to run every project in full — problem, reasoning, four figures, a
+ * tabbed comparison, a system layer and a boundary note, three times over. The
+ * depth was real, but it was spent on a reader who had not yet decided to
+ * spend anything, and the one real client engagement sat at the bottom of it.
+ *
+ * The order now answers four questions in the order a reviewer asks them: who
+ * is this, what kind of designer, what proves it, and where do I look next.
+ * Each project appears once, at its strongest moment; the full argument lives
+ * in the Project Center and the published case studies.
+ */
 export default function Home() {
   return (
     <>
@@ -20,18 +33,48 @@ export default function Home() {
 
       <main id="main">
         <HeroStage />
-        <ValoraChapter />
 
-        {/* Used once, to mark the move from flagship depth to shorter work. */}
-        <ChapterTransition label="Selected work">
-          One project shown in full. Three more, shown for what each one settles.
-        </ChapterTransition>
+        {/* Evidence ---------------------------------------------------------
+            Three projects, one proof each. Sides alternate so the run does not
+            read as the same block printed three times. */}
+        <section id="work" className="scroll-mt-24 pt-[var(--spacing-chapter)]">
+          <Reveal className="shell pb-12">
+            <div className="flex items-baseline gap-x-6">
+              <p className="meta">Selected work</p>
+              <span className="rule-fill" aria-hidden="true" />
+            </div>
+            <h2 className="mt-6 max-w-[26ch] font-serif text-chapter leading-[1.04] tracking-[-0.03em] text-text-strong">
+              Three decisions worth defending.
+            </h2>
 
-        <SelectedWork />
+            {/* The honesty, kept — but once, and short.
+                It used to run as a full Evidence boundary block after every
+                project, which was the strongest thing on the old page and also
+                three-quarters of its length. Moving the case studies out took
+                it with them. One line holds the same position: these are
+                concepts, nothing is measured, and the page says so before a
+                reviewer has to work it out. */}
+            <p className="measure mt-6 text-[0.95rem] leading-relaxed text-text-muted">
+              All three are self-directed concepts. The screens are real design
+              work; the data inside them is demonstration content, and nothing
+              here has been tested with users — each project names the test that
+              would settle it.
+            </p>
+          </Reveal>
 
-        {/* Catches a reader the work has already convinced, before the method
-            section asks them for more attention. */}
-        <EngagementInvite />
+          {homeEvidence.map((block, i) => (
+            <EvidenceBlock key={block.id} block={block} reversed={i % 2 === 1} />
+          ))}
+
+          <Reveal className="shell pb-[var(--spacing-chapter)]">
+            <Link href="/projects" className="action action-primary">
+              All four projects
+              <span aria-hidden="true" className="arrow">
+                →
+              </span>
+            </Link>
+          </Reveal>
+        </section>
 
         <ApproachProofPair />
         <ContactInvitation />

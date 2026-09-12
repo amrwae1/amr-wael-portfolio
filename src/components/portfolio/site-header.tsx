@@ -58,7 +58,7 @@ export function SiteHeader() {
             <a
               key={item.href}
               href={item.href}
-              aria-current={current === item.href.slice(1) ? "location" : undefined}
+              aria-current={current === sectionId(item.href) ? "location" : undefined}
               className="nav-link text-[0.95rem]"
             >
               {item.label}
@@ -109,7 +109,7 @@ export function SiteHeader() {
                   <a
                     key={item.href}
                     href={item.href}
-                    aria-current={current === item.href.slice(1) ? "location" : undefined}
+                    aria-current={current === sectionId(item.href) ? "location" : undefined}
                     onClick={() => setOpen(false)}
                     className="flex min-h-[44px] items-center border-b border-rule py-3 font-serif text-[1.4rem] text-text-strong no-underline"
                   >
@@ -146,12 +146,21 @@ export function SiteHeader() {
  * its first pixel appears. Sections are read from the nav so the two can never
  * drift apart.
  */
+/** The element id a nav href points at, or null for a route link. */
+function sectionId(href: string) {
+  const hash = href.indexOf("#");
+  return hash === -1 ? null : href.slice(hash + 1);
+}
+
 function useCurrentSection() {
   const [current, setCurrent] = useState<string | null>(null);
 
   useEffect(() => {
     const targets = site.navigation
-      .map((item) => document.getElementById(item.href.slice(1)))
+      .map((item) => {
+        const id = sectionId(item.href);
+        return id ? document.getElementById(id) : null;
+      })
       .filter((el): el is HTMLElement => el !== null);
 
     if (targets.length === 0) return;
