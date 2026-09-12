@@ -37,7 +37,7 @@ export default function Projects() {
       <CursorMark />
       <SiteHeader />
 
-      <main id="main" className="shell pt-[calc(4rem+var(--spacing-chapter))]">
+      <main id="main" className="shell pt-[calc(4rem+var(--space-section))]">
         <Reveal>
           <p className="meta text-text-muted">Project center</p>
           <h1 className="mt-6 max-w-[18ch] font-serif text-chapter leading-[1.02] tracking-[-0.03em] text-text-strong">
@@ -49,7 +49,7 @@ export default function Projects() {
           </p>
         </Reveal>
 
-        <ul className="mt-[var(--spacing-chapter)] list-none">
+        <ul className="mt-[var(--space-section)] list-none">
           {projectCards.map((project, i) => (
             <Reveal
               as="li"
@@ -131,17 +131,12 @@ export default function Projects() {
                   ) : null}
 
                   {project.href ? (
-                    <a
-                      href={project.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="action action-primary mt-7"
-                    >
+                    <Link href={project.href} className="action action-primary mt-7">
                       View project
                       <span aria-hidden="true" className="arrow">
-                        ↗
+                        →
                       </span>
-                    </a>
+                    </Link>
                   ) : null}
                 </div>
 
@@ -167,7 +162,7 @@ export default function Projects() {
           ))}
         </ul>
 
-        <Reveal className="mt-[var(--spacing-chapter)] border-t border-rule pt-10">
+        <Reveal className="mt-[var(--space-section)] border-t border-rule pt-10">
           <h2 className="text-title leading-[1.15] tracking-[-0.02em] text-text-strong">
             Have a problem shaped like one of these?
           </h2>
@@ -185,7 +180,10 @@ export default function Projects() {
           <p className="meta">
             Amr Wael — Product designer, Cairo · {new Date().getFullYear()}
           </p>
-          <Link href="/" className="meta normal-case tracking-normal text-text-muted">
+          <Link
+            href="/"
+            className="meta inline-flex min-h-11 items-center normal-case tracking-normal text-text-muted"
+          >
             Back to home
           </Link>
         </div>

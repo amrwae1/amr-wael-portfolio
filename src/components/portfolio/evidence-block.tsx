@@ -23,7 +23,7 @@ import { Reveal } from "./reveal";
  */
 export function EvidenceBlock({ block, reversed = false }: { block: Block; reversed?: boolean }) {
   return (
-    <article id={block.id} className="shell scroll-mt-24 pb-[var(--spacing-chapter)]">
+    <article id={block.id} className="shell scroll-mt-24 pb-[var(--space-section)]">
       <Reveal className="border-t border-rule pt-8">
         <div className="flex items-baseline gap-x-5">
           <p className="folio" aria-hidden="true">
@@ -40,7 +40,7 @@ export function EvidenceBlock({ block, reversed = false }: { block: Block; rever
         </p>
       </Reveal>
 
-      <div className="grid-12 mt-10 items-center">
+      <div className="grid-12 mt-[var(--space-related)] items-center">
         {/* The screen. Alternating sides keeps three blocks in a row from
             reading as one repeated template. */}
         <Reveal
@@ -51,14 +51,30 @@ export function EvidenceBlock({ block, reversed = false }: { block: Block; rever
               : "col-span-4 md:col-span-8 lg:col-span-7"
           }
         >
-          <figure className="plate">
+          {/* A portrait phone capture is contained and centred rather than
+              stretched to the column. At full width it stands twice as tall as
+              the landscape product screens beside it and takes visual priority
+              it has not earned — Valora leads this page, not Booking.com. */}
+          <figure
+            className={
+              block.portrait
+                ? "plate mx-auto max-w-[19rem] sm:max-w-[21rem]"
+                : "plate"
+            }
+          >
             <div className="plate-media">
               <Image
                 src={block.figure.src}
                 alt={block.figure.alt}
                 width={block.figure.width}
                 height={block.figure.height}
-                sizes="(min-width: 1024px) 58vw, 100vw"
+                sizes={
+                  block.portrait
+                    ? "(min-width: 640px) 21rem, 19rem"
+                    : "(min-width: 1024px) 58vw, 100vw"
+                }
+                priority={block.lead}
+                loading={block.lead ? undefined : "lazy"}
                 className="block h-auto w-full"
               />
             </div>

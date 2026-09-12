@@ -37,7 +37,7 @@ export default function Home() {
         {/* Evidence ---------------------------------------------------------
             Three projects, one proof each. Sides alternate so the run does not
             read as the same block printed three times. */}
-        <section id="work" className="scroll-mt-24 pt-[var(--spacing-chapter)]">
+        <section id="work" className="scroll-mt-24 pt-[var(--space-section)]">
           <Reveal className="shell pb-12">
             <div className="flex items-baseline gap-x-6">
               <p className="meta">Selected work</p>
@@ -66,7 +66,7 @@ export default function Home() {
             <EvidenceBlock key={block.id} block={block} reversed={i % 2 === 1} />
           ))}
 
-          <Reveal className="shell pb-[var(--spacing-chapter)]">
+          <Reveal className="shell pb-[var(--space-section)]">
             <Link href="/projects" className="action action-primary">
               All four projects
               <span aria-hidden="true" className="arrow">

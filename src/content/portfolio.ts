@@ -100,11 +100,18 @@ export const hero = {
   /** Kept for the social card and any surface with room for the long form. */
   support:
     "I work through the layers behind a problem — context, constraints, and product systems — to find the approach that holds, then make it clear and usable.",
-  role: "Product Designer · B2B and AI products · Cairo",
+  role: "Product Designer · Cairo",
   claim: "I design the decisions inside complex products.",
-  lead: "Self-directed work on decision-heavy B2B and AI interfaces, built back from the business outcome that has to move.",
-  primary: { label: "See the work", href: "#work" },
-  secondary: { label: "All projects", href: "/projects" },
+  lead: "Self-directed B2B and AI concepts, designed around business goals.",
+  primary: { label: "Explore projects", href: "/projects" },
+  /* The employment pathway. A résumé PDF exists in the workspace but carries a
+     phone number the site deliberately withholds, so this points at the public
+     professional record instead of publishing that. Swap the href for a hosted
+     résumé once a redacted copy is approved. */
+  secondary: {
+    label: "Experience on LinkedIn",
+    href: "https://www.linkedin.com/in/amr-wael-120596346",
+  },
 } as const;
 
 /* -------------------------------------------------------------------------- */
@@ -467,42 +474,33 @@ export const karmaShop = {
 
 export const approach = {
   heading: "The story changes with every problem. The logic underneath does not.",
-  body: "Not a method applied to a brief. It is what the work already does, described in order.",
+  body: "Three things hold across all of it.",
+  /* Five steps became three. The old list re-explained each project a second
+     time, which is what a reader had already been shown; these state the
+     principle and point at the page where it is demonstrated. Links go to the
+     project pages now — #karma-shop no longer exists on this page, and the
+     others should reach the full argument rather than the teaser above. */
   steps: [
     {
       index: "01",
-      title: "Start at the business objective",
-      body: "Before anything is designed, what outcome has to move? Valora starts from the manager's coaching decision, not from a dashboard brief.",
+      title: "Start at the outcome, not the brief",
+      body: "Valora begins from the coaching decision a manager has to make, not from a request for a dashboard.",
       project: "Valora",
-      href: "#valora",
+      href: "/projects/valora",
     },
     {
       index: "02",
-      title: "Find the layer the problem actually sits in",
-      body: "Noon's product page did not lack information. Shoppers had plenty and still hesitated, so the problem to solve was doubt, not density.",
+      title: "Solve the layer the problem is actually in",
+      body: "Noon’s page did not lack information, so adding more would not have helped. The work went into placement.",
       project: "Noon",
-      href: "#noon",
+      href: "/projects/noon",
     },
     {
       index: "03",
-      title: "Choose an approach that holds under constraint",
-      body: "For high-comparison travel choices, transparency and structure beat persuasion — the shopper is going to compare regardless.",
+      title: "Say where the evidence stops",
+      body: "Every project names what it has not established and the test that would settle it. The boundary is part of the work.",
       project: "Booking.com",
-      href: "#booking",
-    },
-    {
-      index: "04",
-      title: "Make the decision visible in the product",
-      body: "Valora's evidence base sits above the recommendation because evidence before recommendation is the product's position, not a layout preference.",
-      project: "Valora",
-      href: "#valora",
-    },
-    {
-      index: "05",
-      title: "State where the evidence stops",
-      body: "Karma Shop is listed as upcoming rather than dressed up as a case study, and no project claims a result it has not measured. The boundary is part of the work.",
-      project: "Karma Shop",
-      href: "#karma-shop",
+      href: "/projects/booking",
     },
   ],
 } as const;
@@ -515,8 +513,8 @@ export const approach = {
  * enquiry — it is a one-line addition if he wants it.
  */
 export const contact = {
-  heading: "Bring a real problem. We'll start with the outcome it has to move.",
-  body: "If you have a product or business problem with consequences attached, that is the useful place to begin — before scope, before screens.",
+  heading: "Bring a real problem.",
+  body: "Start with the outcome it has to move — before scope, before screens.",
   email: "amrwael322@gmail.com",
   channels: [
     {

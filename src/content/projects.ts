@@ -31,6 +31,11 @@ export type EvidenceBlock = {
   figure: { src: string; alt: string; width: number; height: number };
   evidence: EvidenceKind;
   href: string;
+  /** A phone capture. Shown contained rather than filling the column, so a tall
+      portrait screenshot does not out-shout the landscape product screens. */
+  portrait?: boolean;
+  /** Valora leads the page and loads eagerly; the rest stay lazy. */
+  lead?: boolean;
 };
 
 export const homeEvidence: EvidenceBlock[] = [
@@ -50,17 +55,18 @@ export const homeEvidence: EvidenceBlock[] = [
       height: 1000,
     },
     evidence: "solution",
-    href: "/projects#valora",
+    href: "/projects/valora",
+    lead: true,
   },
   {
     id: "noon",
     index: "02",
     name: "Noon",
-    context: "An e-commerce product page losing shoppers at the moment before add-to-cart.",
+    context: "A marketplace product page, redesigned around the last step before a shopper commits.",
     proves:
       "Delivery date, instalment cost and seller standing move up beside the price instead of surfacing at checkout.",
     matters:
-      "The gap was doubt, not missing information. More detail does not settle a doubt; putting it where the hesitation happens does.",
+      "The hypothesis is that doubt stalls the purchase, not missing information — so the work went into placement rather than more detail. Untested.",
     figure: {
       src: "/media/noon/move-02-logistics.webp",
       alt: "The redesigned Noon product page: an express delivery badge committing to a date, a countdown on that promise, instalments shown monthly, and a row of seller signals beneath.",
@@ -68,7 +74,7 @@ export const homeEvidence: EvidenceBlock[] = [
       height: 1100,
     },
     evidence: "solution",
-    href: "/projects#noon",
+    href: "/projects/noon",
   },
   {
     id: "booking",
@@ -86,7 +92,8 @@ export const homeEvidence: EvidenceBlock[] = [
       height: 1600,
     },
     evidence: "solution",
-    href: "/projects#booking",
+    href: "/projects/booking",
+    portrait: true,
   },
 ];
 
@@ -143,7 +150,7 @@ export const projectCards: ProjectCard[] = [
       "Nothing here has been tested with sales managers. No claim about coaching performance, revenue or behaviour change is supported.",
     limitTest:
       "Put the ranked list in front of managers with their own team numbers in it, and check whether the issue at the top is the one they would have picked anyway. If the ordering only ever agrees with them, the prioritisation is decoration.",
-    href: "https://www.behance.net/gallery/252308407/Valora-Designing-AI-for-Better-Coaching-Decisions",
+    href: "/projects/valora",
     figure: {
       src: "/media/valora/opportunity-evidence.webp",
       alt: "Valora's evidence view: pattern counts first, then the individual calls a manager can open and check.",
@@ -157,18 +164,18 @@ export const projectCards: ProjectCard[] = [
     name: "Noon",
     category: "E-commerce · Mobile",
     description:
-      "A product-page redesign for a shopper who has all the information and still hesitates at the last step before buying.",
+      "A product-page redesign focused on the last step before a shopper commits, where the deciding detail is spread across the scroll.",
     role: "Product design, interaction, visual design",
     standing: "Self-directed concept",
     challenge:
-      "Reducing uncertainty without adding content. Variant choice overwhelmed, shipping cost arrived too late to be useful, and reassurance sat nowhere near the decision.",
+      "Reducing uncertainty without adding content. Variant choice is heavy, shipping cost resolves only at checkout, and reassurance sits nowhere near the decision.",
     proof:
       "Four redesigned moves that distribute trust through the scroll and summarise value directly above the primary action.",
     limit:
-      "The product, prices and review counts are representative content, not live Noon data. No conversion or behavioural result is claimed.",
+      "Representative content, not live Noon data. The hesitation hypothesis is untested — no drop-off was observed or measured — and no conversion result is claimed.",
     limitTest:
       "Run a comparative task on both versions of the page, watching where a shopper stalls rather than asking which they prefer. Preference and hesitation are different measurements, and only the second one is the claim.",
-    href: "https://www.behance.net/gallery/249127589/Noons-products-page-redesign",
+    href: "/projects/noon",
     figure: {
       src: "/media/noon/move-04-confidence.webp",
       alt: "The redesigned Noon page: return eligibility and per-seller shipping stated plainly, with a persistent action bar carrying quantity and save.",
@@ -193,7 +200,7 @@ export const projectCards: ProjectCard[] = [
       "Properties, prices and review counts are sample content. No claim of faster decisions or reduced cognitive load.",
     limitTest:
       "Hand someone two candidate stays and a cancellation constraint, then count the screens they open before they can answer. The whole argument is that the answer is already on the card — that is countable, and it has not been counted.",
-    href: "https://www.behance.net/gallery/243357691/UI-Redesign-Case-Study-Bookingcom-iOS",
+    href: "/projects/booking",
     figure: {
       src: "/media/booking/listing-expanded.webp",
       alt: "The expanded Booking.com result: the nightly rate broken out from taxes and fees, and free cancellation confirmed.",
@@ -213,6 +220,7 @@ export const projectCards: ProjectCard[] = [
     challenge:
       "Working inside a business's own constraints rather than ones chosen to make the design work.",
     proof:
-      "Nothing published yet. It goes up when the shipped and the proposed parts can be shown separately — an unfinished engagement dressed as a finished case study would misrepresent both.",
+      "Nothing published yet. The page says what stage it is at and what will be shown, which is all that can honestly go out while it runs.",
+    href: "/projects/karma-shop",
   },
 ];

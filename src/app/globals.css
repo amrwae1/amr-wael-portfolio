@@ -48,10 +48,26 @@
   /* The large muted numeral that hangs in a chapter's left rail. */
   --text-folio: clamp(1.7rem, 1.2rem + 2vw, 3rem);
 
-  /* Rhythm ----------------------------------------------------------------- */
+  /* Rhythm -----------------------------------------------------------------
+     One scale, four steps, each about 1.6x the last. Every vertical gap on the
+     site picks a step rather than inventing a number, which is what makes the
+     spacing read as a system rather than as a series of local decisions.
+
+     The point of the scale is the contrast between its ends: `--space-section`
+     is deliberately large enough that a new section announces itself without a
+     rule, while `--space-tight` keeps a caption welded to the thing it
+     explains. Space that is generous everywhere reads as empty; space that is
+     generous only between unrelated things reads as composure. */
   --spacing-gutter: 1.5rem;
-  --spacing-margin: clamp(1.5rem, 5vw, 4.5rem);
-  --spacing-chapter: clamp(4rem, 9vw, 10rem);
+  --spacing-margin: clamp(1.75rem, 5.5vw, 5.5rem);
+
+  --space-tight: clamp(0.75rem, 0.6rem + 0.6vw, 1.25rem);
+  --space-related: clamp(1.5rem, 1.2rem + 1.4vw, 2.75rem);
+  --space-block: clamp(3rem, 2.2rem + 3.4vw, 6rem);
+  --space-section: clamp(5.5rem, 4rem + 7vw, 13rem);
+
+  /* Kept as the alias the older sections still reference. */
+  --spacing-chapter: var(--space-section);
 }
 
 /* ==========================================================================
@@ -387,8 +403,22 @@
   }
 
   .action:hover .arrow,
-  .link-rule:hover .arrow {
+  .link-rule:hover .arrow,
+  .action:focus-visible .arrow,
+  .link-rule:focus-visible .arrow {
     transform: translateX(3px);
+  }
+
+  /* A backward arrow travels the other way, or the gesture contradicts the
+     direction of the link. */
+  .link-rule .arrow-back {
+    display: inline-block;
+    transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .link-rule:hover .arrow-back,
+  .link-rule:focus-visible .arrow-back {
+    transform: translateX(-3px);
   }
 
   /* Quiet text link with a moving rule. */

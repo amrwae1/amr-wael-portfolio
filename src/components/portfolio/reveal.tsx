@@ -37,6 +37,7 @@ export function Reveal({
   className = "",
   as = "div",
   variant = "prose",
+  style,
 }: {
   children: React.ReactNode;
   delay?: number;
@@ -44,6 +45,8 @@ export function Reveal({
   as?: "div" | "li";
   /** "plate" for evidence figures and chapter openings; "prose" for everything else. */
   variant?: "prose" | "plate";
+  /** For the rule colour on boundary and objective callouts. */
+  style?: React.CSSProperties;
 }) {
   const reduce = useReducedMotion();
   const Element = as === "li" ? motion.li : motion.div;
@@ -57,6 +60,7 @@ export function Reveal({
          the animation most of the page would stay invisible. */
       data-reveal=""
       className={className}
+      style={style}
       initial={rises ? { opacity: 0, y: 16 } : { opacity: 0 }}
       whileInView={rises ? { opacity: 1, y: 0 } : { opacity: 1 }}
       /* Default `amount` ("some") rather than a fraction: a chapter head taller
