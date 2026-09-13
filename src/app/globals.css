@@ -1008,17 +1008,27 @@
 
 /* ==========================================================================
    The project card system
-   Four brand worlds on one grid. What is shared: the ratio, the type scale,
-   the spacing, the state timing, and a single easing curve. What varies: the
-   colour, the art, and which element completes a motion on hover.
+   Four brand posters on one system. Shared: ratios, type scale, spacing,
+   timing and one easing curve. Varied: the palette, the poster, and which
+   element completes the gesture.
 
-   Every state is driven from `.card`, so the whole card responds as one object
-   — there is nothing separately hoverable inside it.
+   Two switches drive every state, both 0 or 1:
+     --hot  the card is being approached (hover, or keyboard focus)
+     --on   the poster is resolved — follows --hot, but touch devices and
+            reduced motion hold it at 1, so their resting card is the finished
+            idea rather than the prelude to one.
+   Hover, focus and press are stages of one interaction because they all move
+   the same two numbers. Nothing inside a card is separately interactive.
    ========================================================================== */
 
 @layer components {
   .card {
     --card-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --card-slow: 580ms;
+    --card-mid: 440ms;
+    --copy: 100%;
+    --hot: 0;
+    --on: 0;
 
     position: relative;
     display: flex;
@@ -1026,44 +1036,71 @@
     justify-content: flex-end;
     overflow: hidden;
     isolation: isolate;
-    /* Mobile: taller than wide, recomposed rather than cropped. */
-    aspect-ratio: 4 / 5;
-    padding: clamp(1.5rem, 5vw, 2.5rem);
-    border-radius: 14px;
-    border: 1px solid var(--color-rule);
-    background-color: var(--color-canvas);
+    /* Mobile: taller than wide, poster above the type and never behind it.
+       3:4 rather than a strict 4:5 — the extra height goes to the poster so
+       it does not have to sit under the name. */
+    --pad: clamp(1.4rem, 6vw, 2.25rem);
+    aspect-ratio: 3 / 4;
+    padding: var(--pad);
+    border-radius: 16px;
+    background-color: #030303;
+    color: inherit;
     text-decoration: none;
-    transition:
-      border-color 280ms var(--card-ease),
-      transform 280ms var(--card-ease);
+    -webkit-tap-highlight-color: transparent;
+    transform: translateY(calc(var(--hot) * -3px));
+    transition: transform var(--card-mid) var(--card-ease);
   }
 
-  @media (min-width: 48rem) {
-    .card {
-      aspect-ratio: 16 / 10;
-      padding: clamp(2rem, 3.4vw, 3.25rem);
+  /* Tonal edge at rest; the project's own colour on approach. */
+  .card::before,
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .card::before {
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.07);
+  }
+
+  .card::after {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tint-bright) 42%, transparent);
+    opacity: var(--hot);
+    transition: opacity var(--card-mid) var(--card-ease);
+  }
+
+  @media (hover: hover) {
+    .card:hover {
+      --hot: 1;
+      --on: 1;
     }
   }
 
-  .card:hover {
-    border-color: color-mix(in srgb, var(--tint-bright) 42%, transparent);
-  }
-
+  /* Keyboard focus gets exactly what hover gets, plus a ring. */
   .card:focus-visible {
+    --hot: 1;
+    --on: 1;
     outline: 2px solid var(--color-focus);
-    outline-offset: 3px;
-    border-color: color-mix(in srgb, var(--tint-bright) 42%, transparent);
+    outline-offset: 4px;
   }
 
-  /* Pressed: a small, fast acknowledgement. Never a bounce. */
+  /* No hover to reveal it, so the poster rests resolved. */
+  @media (hover: none) {
+    .card {
+      --on: 1;
+    }
+  }
+
+  /* Pressed: the lift gives back, quickly. Never a bounce. */
   .card:active {
-    transform: scale(0.995);
+    transform: translateY(calc(var(--hot) * -1px)) scale(0.992);
+    transition-duration: 120ms;
   }
 
-  /* --- The wash ---------------------------------------------------------
-     The project colour, barely present at rest and lifting on approach. It is
-     also the colour that opens the project page, which is what makes the two
-     read as one move. */
+  /* --- Wash: the tint, deepening on approach ----------------------------- */
   .card-wash {
     position: absolute;
     inset: 0;
@@ -1071,262 +1108,447 @@
     pointer-events: none;
     background:
       radial-gradient(
-        120% 90% at 78% 12%,
-        color-mix(in srgb, var(--tint) 26%, transparent) 0%,
-        transparent 68%
-      ),
-      radial-gradient(
-        90% 70% at 12% 96%,
-        color-mix(in srgb, var(--tint) 12%, transparent) 0%,
+        110% 85% at 78% 18%,
+        color-mix(in srgb, var(--tint) 46%, transparent) 0%,
         transparent 70%
-      );
-    opacity: 0.55;
-    transition: opacity 320ms var(--card-ease);
+      ),
+      linear-gradient(180deg, color-mix(in srgb, var(--tint) 12%, #040404) 0%, #030303 100%);
+    opacity: calc(0.6 + var(--hot) * 0.4);
+    transition: opacity var(--card-slow) var(--card-ease);
   }
 
-  .card:hover .card-wash,
-  .card:focus-visible .card-wash {
-    opacity: 1;
-  }
-
-  /* --- The art ---------------------------------------------------------- */
+  /* --- Poster placement ---------------------------------------------------- */
+  /* Stacked (phones, and the pair on tablets): the poster is in the flow,
+     taking whatever height the type leaves, bled to the card's top and side
+     edges. It is drawn whole and centred, so the full idea is visible at any
+     width, and it can never slide under the name. */
   .card-art {
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline-end: 0;
+    position: relative;
     z-index: -1;
-    width: 68%;
-    max-width: 26rem;
+    display: flex;
+    flex: 1 1 0;
+    justify-content: center;
+    min-height: 0;
+    margin: calc(var(--pad) * -1) calc(var(--pad) * -1) 0.75rem;
     pointer-events: none;
+    opacity: calc(0.78 + var(--hot) * 0.22);
+    -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+    transition: opacity var(--card-slow) var(--card-ease);
   }
 
   .card-art svg {
-    width: 100%;
-    height: auto;
     display: block;
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    aspect-ratio: 1;
+    /* The field has margin around the motif; spend it on scale. */
+    transform: scale(1.22);
   }
 
+  /* Split: type left, poster right, the poster fading into the type rather
+     than boxed beside it. */
   @media (min-width: 48rem) {
-    .card-art {
-      width: 52%;
-      inset-block-start: 50%;
-      transform: translateY(-50%);
+    .card[data-scale="flagship"],
+    .card[data-scale="quiet"] {
+      --copy: 46%;
+      aspect-ratio: 16 / 10;
+      padding: clamp(2rem, 3.6vw, 3.75rem);
     }
 
-    .card[data-scale="flagship"] .card-art {
-      width: 46%;
-      inset-inline-end: 4%;
+    .card[data-scale="flagship"] .card-art,
+    .card[data-scale="quiet"] .card-art {
+      position: absolute;
+      inset: 0 0 auto auto;
+      display: block;
+      margin: 0;
+      width: 58%;
+      height: 84%;
+      -webkit-mask-image:
+        linear-gradient(to right, transparent 0%, #000 34%),
+        linear-gradient(to bottom, #000 78%, transparent 100%);
+      -webkit-mask-composite: source-in;
+      mask-image:
+        linear-gradient(to right, transparent 0%, #000 34%),
+        linear-gradient(to bottom, #000 78%, transparent 100%);
+      mask-composite: intersect;
+    }
+
+    .card[data-scale="flagship"] .card-art svg,
+    .card[data-scale="quiet"] .card-art svg {
+      width: 100%;
+      aspect-ratio: auto;
+      transform: none;
     }
   }
 
-  /* --- Type ------------------------------------------------------------- */
+  /* The closing card: full width, but lower and quieter than the flagship. */
+  @media (min-width: 64rem) {
+    .card[data-scale="quiet"] {
+      --copy: 42%;
+      aspect-ratio: 21 / 9;
+    }
+
+    .card[data-scale="quiet"] .card-art {
+      width: 50%;
+      inset-inline-end: 3%;
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .card[data-scale="standard"] {
+      --copy: 50%;
+      aspect-ratio: 16 / 10;
+      padding: clamp(2rem, 2.8vw, 3rem);
+    }
+
+    .card[data-scale="standard"] .card-art {
+      position: absolute;
+      inset: 0 0 auto auto;
+      display: block;
+      margin: 0;
+      width: 52%;
+      height: 78%;
+      -webkit-mask-image:
+        linear-gradient(to right, transparent 0%, #000 28%),
+        linear-gradient(to bottom, #000 78%, transparent 100%);
+      -webkit-mask-composite: source-in;
+      mask-image:
+        linear-gradient(to right, transparent 0%, #000 28%),
+        linear-gradient(to bottom, #000 78%, transparent 100%);
+      mask-composite: intersect;
+    }
+  }
+
+  /* The pair's poster sits in a smaller slot; bring the motif forward so it
+     holds its own beside the type instead of reading as a thumbnail. */
+  @media (min-width: 72rem) {
+    .card[data-scale="standard"] .card-art svg {
+      width: 100%;
+      aspect-ratio: auto;
+      transform: scale(1.16);
+      transform-origin: 58% 50%;
+    }
+  }
+
+  /* The closing card is quieter at rest, and still arrives fully on approach. */
+  .card[data-scale="quiet"] .card-art {
+    opacity: calc(0.6 + var(--hot) * 0.4);
+  }
+
+  /* --- Type --------------------------------------------------------------- */
   .card-body {
-    display: block;
     position: relative;
-    max-width: 34ch;
+    display: flex;
+    flex-direction: column;
   }
 
   .card-category {
-    display: block;
+    max-width: calc(var(--copy) + 10%);
     font-size: var(--text-meta);
+    line-height: 1.45;
     letter-spacing: 0.09em;
     text-transform: uppercase;
     color: var(--color-text-muted);
-    transition: color 240ms var(--card-ease);
   }
 
-  .card:hover .card-category,
-  .card:focus-visible .card-category {
-    color: color-mix(in srgb, var(--tint-bright) 72%, var(--color-text));
-  }
-
+  /* The name never moves: it is the one fixed point in every state. */
   .card-title {
-    display: block;
-    margin-block-start: 0.9rem;
+    margin-block-start: 0.8rem;
     font-family: var(--font-serif);
-    font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
-    line-height: 1.02;
+    font-size: clamp(2.1rem, 1.5rem + 2.2vw, 3.25rem);
+    line-height: 1;
     letter-spacing: -0.03em;
     color: var(--color-text-strong);
   }
 
   .card[data-scale="flagship"] .card-title {
-    font-size: clamp(2.4rem, 1.6rem + 3.6vw, 4.5rem);
+    font-size: clamp(2.6rem, 1.5rem + 4.2vw, 5.25rem);
   }
 
-  .card-value {
-    display: block;
-    margin-block-start: 0.85rem;
-    max-width: 30ch;
-    font-size: 1rem;
-    line-height: 1.45;
+  .card[data-scale="quiet"] .card-title {
+    font-size: clamp(2.1rem, 1.5rem + 1.8vw, 3rem);
+  }
+
+  .card-impact {
+    margin-block-start: 1rem;
+    max-width: min(var(--copy), 30ch);
+    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
+    line-height: 1.42;
     color: var(--color-text);
+    text-wrap: pretty;
   }
 
+  .card[data-scale="flagship"] .card-impact {
+    max-width: min(var(--copy), 28ch);
+    font-size: clamp(1.1rem, 0.95rem + 0.6vw, 1.45rem);
+    line-height: 1.38;
+  }
+
+  /* Impact and evidence status are different kinds of statement — what the
+     design is for, and how much of it is established — so a rule separates
+     them rather than letting the status read as a continuation. */
   .card-foot {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
-    margin-block-start: clamp(1.5rem, 3vw, 2.25rem);
+    margin-block-start: clamp(1.75rem, 3.2vw, 2.75rem);
+    padding-block-start: 1rem;
+    border-top: 1px solid rgb(255 255 255 / 0.1);
   }
 
   .card-status {
     font-size: var(--text-meta);
-    letter-spacing: 0.075em;
+    line-height: 1.45;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
     color: var(--color-text-muted);
   }
 
   .card-cue {
     display: inline-flex;
+    flex: none;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
-    flex: none;
+    width: 40px;
+    height: 40px;
     border-radius: 999px;
-    border: 1px solid var(--color-rule);
+    border: 1px solid rgb(255 255 255 / 0.16);
     color: var(--color-text);
+    transform: translateX(calc(var(--hot) * 5px));
     transition:
-      transform 280ms var(--card-ease),
-      border-color 280ms var(--card-ease),
-      color 280ms var(--card-ease),
-      background-color 280ms var(--card-ease);
+      transform var(--card-mid) var(--card-ease),
+      border-color var(--card-mid) var(--card-ease),
+      background-color var(--card-mid) var(--card-ease),
+      color var(--card-mid) var(--card-ease);
   }
 
-  .card:hover .card-cue,
+  @media (hover: hover) {
+    .card:hover .card-cue {
+      border-color: color-mix(in srgb, var(--tint-bright) 60%, transparent);
+      background-color: color-mix(in srgb, var(--tint) 30%, transparent);
+      color: var(--color-text-strong);
+    }
+  }
+
   .card:focus-visible .card-cue {
-    transform: translateX(5px);
-    border-color: color-mix(in srgb, var(--tint-bright) 55%, transparent);
-    background-color: color-mix(in srgb, var(--tint) 18%, transparent);
+    border-color: color-mix(in srgb, var(--tint-bright) 60%, transparent);
+    background-color: color-mix(in srgb, var(--tint) 30%, transparent);
     color: var(--color-text-strong);
   }
 
-  /* --- Per-project motion character ------------------------------------
-     Same timing and easing everywhere; a different element completes the
-     gesture in each. The card is fully legible before any of it runs. */
+  /* --- Poster motion ------------------------------------------------------
+     One gesture each, played once per approach. No loops. */
 
-  .v-field,
-  .v-priority,
-  .v-trail,
-  .n-bar,
+  .art-halo {
+    opacity: calc(0.7 + var(--on) * 0.3);
+    transition: opacity var(--card-slow) var(--card-ease);
+  }
+
+  /* Valora: the field quietens, one signal rises through the threshold. */
+  .v-field {
+    opacity: calc(1 - var(--on) * 0.45);
+    transition: opacity var(--card-slow) var(--card-ease);
+  }
+
+  .v-priority {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    transform: scaleY(calc(0.62 + var(--on) * 0.38));
+    transition: transform var(--card-slow) var(--card-ease);
+  }
+
+  /* 172 × 0.38: the marker rides the top of the bar. */
+  .v-marker {
+    transform: translateY(calc((1 - var(--on)) * 65.36px));
+    transition: transform var(--card-slow) var(--card-ease);
+  }
+
+  .v-trail {
+    opacity: calc(var(--on) * 0.7);
+    transition: opacity 420ms var(--card-ease);
+    transition-delay: calc(var(--on) * 240ms);
+  }
+
+  /* Noon: scattered pieces align on the commitment point, then it fills. */
+  .n-piece {
+    transform-box: fill-box;
+    transform-origin: 100% 50%;
+    transform: translate(
+        calc(var(--dx) * (1 - var(--on))),
+        calc(var(--dy) * (1 - var(--on)))
+      )
+      rotate(calc(var(--r) * (1 - var(--on))));
+    transition: transform var(--card-slow) var(--card-ease);
+    transition-delay: calc(var(--i) * 45ms * var(--on));
+  }
+
   .n-point,
-  .b-route,
-  .b-node,
-  .b-gap,
-  .k-settling {
+  .n-ring {
+    transform-box: fill-box;
+    transform-origin: center;
     transition:
-      transform 420ms var(--card-ease),
-      opacity 420ms var(--card-ease);
-  }
-
-  /* Valora: the field recedes and the one priority resolves further out. */
-  .card:hover .v-field,
-  .card:focus-visible .v-field {
-    opacity: 0.45;
-  }
-
-  .card:hover .v-priority,
-  .card:focus-visible .v-priority {
-    transform: translateX(8px);
-  }
-
-  .card:hover .v-trail,
-  .card:focus-visible .v-trail {
-    opacity: 0.85;
-  }
-
-  /* Noon: the fragments arrive at the line together. */
-  .n-bar {
-    transform: translateX(var(--dx));
-    transition-delay: calc(var(--i) * 45ms);
-  }
-
-  .card:hover .n-bar,
-  .card:focus-visible .n-bar {
-    transform: translateX(0);
+      transform 460ms var(--card-ease),
+      opacity 460ms var(--card-ease);
+    transition-delay: calc(var(--on) * 220ms);
   }
 
   .n-point {
-    transform: scale(0.6);
-    transform-origin: 157px 70px;
-    opacity: 0.55;
+    transform: scale(calc(0.45 + var(--on) * 0.55));
   }
 
-  .card:hover .n-point,
-  .card:focus-visible .n-point {
-    transform: scale(1);
-    opacity: 1;
-    transition-delay: 190ms;
+  .n-ring {
+    opacity: calc(0.18 + var(--on) * 0.42);
+    transform: scale(calc(0.78 + var(--on) * 0.22));
   }
 
-  /* Booking: the two routes settle onto the shared reference, and the gap
-     between them — the thing actually being compared — becomes visible. */
+  /* Booking.com: the second frame rotates into the first, and the difference
+     between the two options becomes a measured gap. */
   .b-route-a {
-    transform: translateY(-6px);
+    transform: translateY(calc((1 - var(--on)) * -12px));
+    transition: transform var(--card-slow) var(--card-ease);
   }
 
-  .b-route-b {
-    transform: translateY(6px);
+  .b-frame {
+    transform-box: fill-box;
+    transform-origin: 0% 100%;
+    transform: translate(calc((1 - var(--on)) * 18px), calc((1 - var(--on)) * 22px))
+      rotate(calc((1 - var(--on)) * -8deg));
+    transition: transform var(--card-slow) var(--card-ease);
   }
 
-  .card:hover .b-route,
-  .card:focus-visible .b-route {
-    transform: translateY(0);
+  .b-gap {
+    opacity: calc(var(--on) * 0.9);
+    transition: opacity 380ms var(--card-ease);
+    transition-delay: calc(var(--on) * 300ms);
   }
 
-  .card:hover .b-gap,
-  .card:focus-visible .b-gap {
-    opacity: 0.85;
-    transition-delay: 220ms;
-  }
-
-  /* Karma: one piece settles in. The open edge stays open. */
+  /* Karma Shop: one module settles into its slot. The open edge stays open. */
   .k-settling {
-    transform: translate(10px, -7px);
-    opacity: 0.3;
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: translate(calc((1 - var(--on)) * 26px), calc((1 - var(--on)) * -34px))
+      rotate(calc((1 - var(--on)) * 7deg));
+    opacity: calc(0.6 + var(--on) * 0.4);
+    transition:
+      transform var(--card-slow) var(--card-ease),
+      opacity var(--card-slow) var(--card-ease);
   }
 
-  .card:hover .k-settling,
-  .card:focus-visible .k-settling {
-    transform: translate(0, 0);
-    opacity: 0.75;
+  .k-slot {
+    opacity: calc((1 - var(--on)) * 0.55);
+    transition: opacity 320ms var(--card-ease);
+  }
+
+  /* --- Project page opening ----------------------------------------------
+     The card, continued. Same palette, same poster in its resolved state,
+     same impact sentence — so opening a card reads as the card widening into
+     the page rather than as a new page loading. The wash expands from the top
+     and the poster fades in; the title and text are never delayed. */
+  .project-intro {
+    --on: 1;
+    position: relative;
+    isolation: isolate;
+    padding-block: calc(4rem + var(--space-block)) var(--space-block);
+    text-align: center;
+  }
+
+  .project-intro-wash {
+    position: absolute;
+    inset: 0 0 auto 0;
+    z-index: -1;
+    height: min(62rem, 120%);
+    pointer-events: none;
+    background: radial-gradient(
+      75% 62% at 50% 0%,
+      color-mix(in srgb, var(--tint) 44%, transparent) 0%,
+      color-mix(in srgb, var(--tint) 12%, transparent) 46%,
+      transparent 74%
+    );
+    transform-origin: 50% 0%;
+    animation: intro-wash 720ms var(--card-ease, cubic-bezier(0.22, 1, 0.36, 1)) both;
+  }
+
+  .intro-art {
+    width: 100%;
+    max-width: 46rem;
+    aspect-ratio: 16 / 9;
+    margin-inline: auto;
+    -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+    mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+    animation: intro-art 820ms 100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Drawn whole and centred, as on phones: a hero slot this wide would crop
+     the motif's top and bottom, which is exactly where each idea resolves. */
+  .intro-art {
+    display: flex;
+    justify-content: center;
+  }
+
+  .intro-art svg {
+    display: block;
+    height: 100%;
+    width: auto;
+    aspect-ratio: 1;
+  }
+
+  /* At hero scale the halo reads as a glow; keep it a tint. */
+  .intro-art .art-halo {
+    opacity: 0.6;
+  }
+
+  @media (max-width: 47.99rem) {
+    .intro-art {
+      aspect-ratio: 5 / 4;
+    }
+  }
+
+  @keyframes intro-wash {
+    from {
+      opacity: 0;
+      transform: scaleY(0.4);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes intro-art {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 }
 
-/* The cards must read without any of it. */
+/* Reduced motion: the finished state, immediately, with no travel. */
 @media (prefers-reduced-motion: reduce) {
-  .card,
-  .card-wash,
-  .card-cue,
-  .card-category,
-  .v-field,
-  .v-priority,
-  .v-trail,
-  .n-bar,
-  .n-point,
-  .b-route,
-  .b-node,
-  .b-gap,
-  .k-settling {
-    transition: none !important;
-  }
-
-  /* Resting positions become the final ones, so nothing sits mid-gesture. */
-  .n-bar,
-  .b-route-a,
-  .b-route-b,
-  .k-settling {
+  .card {
+    --on: 1;
     transform: none !important;
   }
 
-  .n-point {
-    transform: scale(1) !important;
-    opacity: 1 !important;
+  .card-cue {
+    transform: none !important;
   }
 
-  .k-settling {
-    opacity: 0.6 !important;
+  .card,
+  .card *,
+  .card::before,
+  .card::after {
+    transition: none !important;
+  }
+
+  .project-intro-wash,
+  .intro-art {
+    animation: none !important;
   }
 }

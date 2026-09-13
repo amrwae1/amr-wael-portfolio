@@ -2,11 +2,9 @@ import Link from "next/link";
 import { CursorMark } from "@/components/portfolio/cursor-mark";
 import { SiteHeader } from "@/components/portfolio/site-header";
 import { HeroStage } from "@/components/portfolio/hero-stage";
-import { EvidenceBlock } from "@/components/portfolio/evidence-block";
 import { ContactInvitation } from "@/components/portfolio/contact-invitation";
 import { Reveal } from "@/components/portfolio/reveal";
 import { ProjectCard } from "@/components/portfolio/project-card";
-import { homeEvidence } from "@/content/projects";
 import { projectCardEntries } from "@/content/project-cards";
 
 /**
@@ -35,65 +33,54 @@ export default function Home() {
       <main id="main">
         <HeroStage />
 
-        {/* Evidence ---------------------------------------------------------
-            Three projects, one proof each. Sides alternate so the run does not
-            read as the same block printed three times. */}
-        <section id="work" className="scroll-mt-24 pt-[var(--space-section)]">
-          <Reveal className="shell pb-12">
+        {/* Selected work ----------------------------------------------------
+            The only place the projects appear on this page. Each card is the
+            first sentence of its project page: what it is for, how much of
+            that is established, and a way in. The screens and the reasoning
+            live one click further on, where someone has chosen to read them. */}
+        <section
+          id="work"
+          aria-labelledby="work-heading"
+          className="-scroll-mt-6 pt-[var(--space-section)] pb-[var(--space-section)]"
+        >
+          <Reveal className="shell">
             <div className="flex items-baseline gap-x-6">
               <p className="meta">Selected work</p>
               <span className="rule-fill" aria-hidden="true" />
             </div>
-            <h2 className="mt-6 max-w-[26ch] font-serif text-chapter leading-[1.04] tracking-[-0.03em] text-text-strong">
-              Three decisions worth defending.
+            <h2
+              id="work-heading"
+              className="mt-7 max-w-[20ch] font-serif text-chapter leading-[1.04] tracking-[-0.03em] text-text-strong"
+            >
+              Four products. Four decisions made clearer.
             </h2>
-
-            {/* The honesty, kept — but once, and short.
-                It used to run as a full Evidence boundary block after every
-                project, which was the strongest thing on the old page and also
-                three-quarters of its length. Moving the case studies out took
-                it with them. One line holds the same position: these are
-                concepts, nothing is measured, and the page says so before a
-                reviewer has to work it out. */}
-            <p className="measure mt-6 text-[0.95rem] leading-relaxed text-text-muted">
-              All three are self-directed concepts. The screens are real design
-              work; the data inside them is demonstration content, and nothing
-              here has been tested with users — each project names the test that
-              would settle it.
+            <p className="measure mt-7 max-w-[52ch] text-lead leading-[1.45] text-text">
+              Three self-directed concepts and one client engagement. Each project
+              shows the intended effect, the evidence behind it, and what remains
+              untested.
             </p>
           </Reveal>
 
-          {/* The cards, weighted. Valora takes the full width because it is
-              the flagship and the page should say so before any copy does;
-              Noon and Booking.com share a row as peers; Karma Shop closes
-              quietly, which is the right volume for work still in progress. */}
-          <div className="shell">
-            <Reveal variant="plate" className="pb-[var(--space-related)]">
+          {/* Weighted, not uniform. Valora leads at full width; Noon and
+              Booking.com are peers; Karma Shop closes lower and quieter, the
+              right volume for work still in progress. */}
+          <ul className="shell mt-[var(--space-block)] grid list-none grid-cols-1 gap-x-[var(--space-related)] gap-y-[calc(var(--space-related)*1.35)] md:grid-cols-2 lg:mt-[calc(var(--space-block)*1.4)]">
+            <Reveal as="li" variant="plate" className="md:col-span-2">
               <ProjectCard entry={projectCardEntries[0]} scale="flagship" />
             </Reveal>
 
-            <div className="grid gap-[var(--space-related)] pb-[var(--space-related)] md:grid-cols-2">
-              {projectCardEntries.slice(1, 3).map((entry, i) => (
-                <Reveal variant="plate" key={entry.slug} delay={i * 0.06}>
-                  <ProjectCard entry={entry} />
-                </Reveal>
-              ))}
-            </div>
+            {projectCardEntries.slice(1, 3).map((entry, i) => (
+              <Reveal as="li" variant="plate" key={entry.slug} delay={i * 0.06}>
+                <ProjectCard entry={entry} />
+              </Reveal>
+            ))}
 
-            <Reveal variant="plate">
+            <Reveal as="li" variant="plate" className="md:col-span-2">
               <ProjectCard entry={projectCardEntries[3]} scale="quiet" />
             </Reveal>
-          </div>
+          </ul>
 
-          {/* The evidence, after the cards. The cards are the invitation; these
-              are the one thing each project actually shows. */}
-          <div className="mt-[var(--space-section)]">
-            {homeEvidence.map((block, i) => (
-              <EvidenceBlock key={block.id} block={block} reversed={i % 2 === 1} />
-            ))}
-          </div>
-
-          <Reveal className="shell pb-[var(--space-section)]">
+          <Reveal className="shell mt-[var(--space-block)]">
             <Link href="/projects" className="action action-primary">
               All four projects
               <span aria-hidden="true" className="arrow">

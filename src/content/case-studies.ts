@@ -48,7 +48,9 @@ export type CaseStudy = {
   status: string;
   /** The situation, stated as fact about the domain. */
   problem: string[];
-  /** The outcome the design is working back from. */
+  /** The decision the product has to support, in the user's terms. */
+  decisionToSupport: string;
+  /** The intended effect the design is working back from. Not a result. */
   objective: string;
   /** What is believed but not established. Rendered as hypothesis, never fact. */
   hypothesis?: string;
@@ -79,6 +81,8 @@ export const caseStudies: CaseStudy[] = [
       "Sales organisations already run CRM systems, conversation intelligence, QA tooling and dashboards. Collecting performance data is a solved problem.",
       "What is not solved is knowing which signal deserves attention this week, understanding why performance moved, and turning that into coaching a manager can actually run on Monday.",
     ],
+    decisionToSupport:
+      "Which of many performance signals a manager should coach on this week — and whether the reason behind that choice can be checked before acting on it.",
     objective:
       "Reduce the time between a performance signal appearing and a manager running a specific coaching action on it — without removing the manager's judgement from the loop.",
     decisions: [
@@ -171,6 +175,8 @@ export const caseStudies: CaseStudy[] = [
       "A marketplace product page has to carry price, variants, delivery, payment terms, seller standing, specification and reviews, all competing for the same screen.",
       "On the page as it stands, the information that decides a purchase is spread across the scroll, and some of it — shipping cost in particular — only resolves at checkout.",
     ],
+    decisionToSupport:
+      "Whether to buy this product now, from this seller, at this price — while delivery, payment terms and returns are still unresolved on the page.",
     objective:
       "Move the information a shopper needs in order to commit closer to the point where they commit.",
     hypothesis:
@@ -262,6 +268,8 @@ export const caseStudies: CaseStudy[] = [
       "Travel choices are comparison-heavy, and the information that settles the comparison usually arrives too late to help.",
       "Two questions in particular wait until checkout: what the stay actually costs once taxes and fees are added, and whether the booking can be cancelled at all.",
     ],
+    decisionToSupport:
+      "Which of two candidate stays is actually the better choice once total cost and cancellation terms are counted, not only the nightly price.",
     objective:
       "Let two candidate stays be weighed against each other without the traveller reconstructing the comparison from memory across separate screens.",
     decisions: [
