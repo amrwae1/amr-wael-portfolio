@@ -23,8 +23,7 @@ export const metadata: Metadata = {
  *
  * The page keeps the direct address visible throughout rather than hiding it
  * behind the button, because some people would simply rather write their own
- * email — and because the form hands off to a mail client, so the address is
- * the honest fallback if that handover fails.
+ * email, and because it is the fallback if sending ever fails.
  */
 export default function Contact() {
   return (
@@ -50,7 +49,7 @@ export default function Contact() {
         </Reveal>
 
         <Reveal className="mt-[var(--space-block)]">
-          <ContactForm />
+          <ContactForm mode={process.env.RESEND_API_KEY ? "direct" : "mail-app"} />
         </Reveal>
 
         {/* Everything else, in one quiet row ---------------------------- */}

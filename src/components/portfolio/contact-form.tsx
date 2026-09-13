@@ -1,63 +1,116 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { site } from "@/content/portfolio";
 
 /**
  * The contact form.
  *
- * There is no backend and no form service configured in this project, so the
- * form composes a message and hands it to the visitor's mail client. That is a
- * real, working path — it is not a stub — but it is worth being precise about
- * what it does and does not do:
+ * `direct` (the normal case): the message is posted to /api/contact and
+ * delivered to Amr's inbox from the site itself. The visitor never leaves the
+ * page. The success state appears only after the server confirms the email
+ * service accepted the message — never on submit.
  *
- * - It cannot confirm delivery, so it never claims to. The success state says
- *   the mail client was opened and shows the address to use if it was not.
- * - It cannot send on the visitor's behalf, so the address stays visible the
- *   whole time rather than hidden behind the button.
+ * `mail-app`: used only when the deployment has no email service configured
+ * (no RESEND_API_KEY at build). The form then hands the message to the
+ * visitor's mail app, and says so, rather than posting into nothing.
  *
- * The alternative would be a form that looks complete, posts nowhere, and shows
- * a green tick. That is worse than no form at all, because the visitor believes
- * they have made contact and Amr never hears from them.
- *
- * Validation is the browser's own, with `noValidate` off, so required fields
- * and the email format are enforced natively and announced by the platform.
+ * On failure the form keeps everything the visitor typed, says plainly that
+ * the message did not send, and offers the address as a fallback. Validation
+ * is the browser's own, so required fields and the email format are enforced
+ * and announced natively; the server checks the same rules again.
  */
 
-type Status = "idle" | "opening" | "opened";
+type Mode = "direct" | "mail-app";
+type Status = "idle" | "sending" | "sent" | "error";
+type ErrorCode =
+  "invalid" | "rate_limited" | "not_configured" | "send_failed" | "network";
 
-export function ContactForm() {
+const errorCopy: Record<ErrorCode, string> = {
+  invalid:
+    "Some details need another look — check your email address and that the message is at least a sentence long.",
+  rate_limited:
+    "Several messages were sent from here in a short time. Please try again in a few minutes.",
+  not_configured: "Sending from the site is unavailable right now.",
+  send_failed:
+    "Your message didn’t send. Everything you wrote is still in the form.",
+  network:
+    "Your message didn’t send — the connection dropped. Everything you wrote is still in the form.",
+};
+
+export function ContactForm({ mode = "direct" }: { mode?: Mode }) {
   const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState<ErrorCode | null>(null);
+  const [sentTo, setSentTo] = useState("");
   const [copied, setCopied] = useState(false);
+  const confirmationRef = useRef<HTMLHeadingElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  /* Move focus to the outcome, so keyboard and screen-reader users land on
+     the result instead of on a button that no longer exists. */
+  useEffect(() => {
+    if (status === "sent") confirmationRef.current?.focus();
+    if (status === "error") errorRef.current?.focus();
+  }, [status]);
+
+  const onSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (status === "sending") return;
+
     const data = new FormData(event.currentTarget);
+    const fields = {
+      name: String(data.get("name") ?? "").trim(),
+      email: String(data.get("email") ?? "").trim(),
+      company: String(data.get("company") ?? "").trim(),
+      problem: String(data.get("problem") ?? "").trim(),
+      botcheck: String(data.get("botcheck") ?? ""),
+    };
 
-    const name = String(data.get("name") ?? "").trim();
-    const email = String(data.get("email") ?? "").trim();
-    const company = String(data.get("company") ?? "").trim();
-    const problem = String(data.get("problem") ?? "").trim();
+    if (mode === "mail-app") {
+      const body = [
+        fields.problem,
+        "",
+        "—",
+        `${fields.name}${fields.company ? ` · ${fields.company}` : ""}`,
+        fields.email,
+      ].join("\n");
+      window.location.href =
+        `mailto:${site.email}` +
+        `?subject=${encodeURIComponent(`A product problem — ${fields.name}`)}` +
+        `&body=${encodeURIComponent(body)}`;
+      return;
+    }
 
-    const body = [
-      problem,
-      "",
-      "—",
-      `${name}${company ? ` · ${company}` : ""}`,
-      email,
-    ].join("\n");
+    setStatus("sending");
+    setError(null);
 
-    const href =
-      `mailto:${site.email}` +
-      `?subject=${encodeURIComponent(`A product problem — ${name}`)}` +
-      `&body=${encodeURIComponent(body)}`;
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fields),
+      });
+      const result = (await response.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: ErrorCode;
+      };
 
-    setStatus("opening");
-    window.location.href = href;
-    /* The browser gives no event for "the mail client opened", so this reports
-       what was actually done — the handover — rather than a delivery it cannot
-       observe. */
-    window.setTimeout(() => setStatus("opened"), 600);
+      if (response.ok && result.ok) {
+        setSentTo(fields.email);
+        setStatus("sent");
+        return;
+      }
+
+      setError(
+        result.error && result.error in errorCopy
+          ? result.error
+          : "send_failed",
+      );
+      setStatus("error");
+    } catch {
+      setError("network");
+      setStatus("error");
+    }
   };
 
   const copyEmail = async () => {
@@ -70,9 +123,50 @@ export function ContactForm() {
     }
   };
 
+  if (status === "sent") {
+    return (
+      <div role="status">
+        <p className="meta" style={{ color: "var(--color-accent-strong)" }}>
+          Message sent
+        </p>
+        <h2
+          ref={confirmationRef}
+          tabIndex={-1}
+          className="measure-tight mt-4 font-serif text-title leading-[1.15] tracking-[-0.02em] text-text-strong outline-none"
+        >
+          Thank you — it’s in my inbox.
+        </h2>
+        <p className="measure mt-4 text-text">
+          I’ll reply to <span className="text-text-strong">{sentTo}</span>.
+        </p>
+        <button
+          type="button"
+          onClick={() => setStatus("idle")}
+          className="link-rule mt-8 text-[0.95rem]"
+        >
+          Send another message
+        </button>
+      </div>
+    );
+  }
+
+  const sending = status === "sending";
+
   return (
     <div>
-      <form onSubmit={onSubmit} className="grid-12">
+      <form onSubmit={onSubmit} className="grid-12" aria-busy={sending}>
+        {/* Honeypot: invisible to people and to assistive technology. A bot
+            that fills every field fills this one too. */}
+        <div aria-hidden="true" className="hidden">
+          <input
+            type="text"
+            name="botcheck"
+            tabIndex={-1}
+            autoComplete="off"
+            defaultValue=""
+          />
+        </div>
+
         <div className="col-span-4 md:col-span-4 lg:col-span-5">
           <label htmlFor="name" className="meta block text-text-muted">
             Name
@@ -82,7 +176,9 @@ export function ContactForm() {
             name="name"
             type="text"
             required
+            maxLength={120}
             autoComplete="name"
+            readOnly={sending}
             className="field mt-2"
           />
         </div>
@@ -96,7 +192,9 @@ export function ContactForm() {
             name="email"
             type="email"
             required
+            maxLength={254}
             autoComplete="email"
+            readOnly={sending}
             className="field mt-2"
           />
         </div>
@@ -104,13 +202,17 @@ export function ContactForm() {
         <div className="col-span-4 md:col-span-8 lg:col-span-11">
           <label htmlFor="company" className="meta block text-text-muted">
             Company or team{" "}
-            <span className="normal-case tracking-normal text-text-muted">(optional)</span>
+            <span className="normal-case tracking-normal text-text-muted">
+              (optional)
+            </span>
           </label>
           <input
             id="company"
             name="company"
             type="text"
+            maxLength={160}
             autoComplete="organization"
+            readOnly={sending}
             className="field mt-2"
           />
         </div>
@@ -119,12 +221,29 @@ export function ContactForm() {
           <label htmlFor="problem" className="meta block text-text-muted">
             What problem are you working on?
           </label>
-          <textarea id="problem" name="problem" required rows={5} className="field mt-2" />
+          <textarea
+            id="problem"
+            name="problem"
+            required
+            minLength={10}
+            maxLength={5000}
+            rows={5}
+            readOnly={sending}
+            className="field mt-2"
+          />
         </div>
 
         <div className="col-span-4 md:col-span-8 lg:col-span-11">
-          <button type="submit" className="action action-primary">
-            {status === "opening" ? "Opening your mail app…" : "Send"}
+          <button
+            type="submit"
+            className="action action-primary"
+            disabled={sending}
+          >
+            {sending
+              ? "Sending…"
+              : mode === "mail-app"
+                ? "Continue in your mail app"
+                : "Send message"}
             <span aria-hidden="true" className="arrow">
               →
             </span>
@@ -132,30 +251,43 @@ export function ContactForm() {
         </div>
       </form>
 
-      {/* The handover is reported, never a delivery. */}
-      <p aria-live="polite" className="measure mt-6 text-[0.95rem] leading-relaxed text-text">
-        {status === "opened" ? (
-          <>
-            Your mail app should have opened with the message ready to send. If nothing
-            happened, the address is{" "}
+      {status === "error" && error ? (
+        <div
+          ref={errorRef}
+          tabIndex={-1}
+          role="alert"
+          className="measure mt-6 border-l pl-5 outline-none"
+          style={{ borderColor: "var(--color-boundary)" }}
+        >
+          <p className="text-[0.95rem] leading-relaxed text-text-strong">
+            {errorCopy[error]}
+          </p>
+          <p className="mt-2 text-[0.95rem] leading-relaxed text-text">
+            Try again, or email me directly at{" "}
             <a href={`mailto:${site.email}`} className="link-rule">
               {site.email}
             </a>
             .
-          </>
-        ) : (
-          <span className="text-text-muted">
-            This opens your own mail app with the message filled in — nothing is sent
-            from this page, and nothing is stored here.
-          </span>
-        )}
-      </p>
+          </p>
+        </div>
+      ) : (
+        <p className="measure mt-6 text-[0.95rem] leading-relaxed text-text-muted">
+          {mode === "mail-app"
+            ? "This opens your own mail app with the message filled in."
+            : "Your message goes straight to my inbox. Your email is used only to reply."}
+        </p>
+      )}
 
       <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+        <span className="text-[0.95rem] text-text-muted">Prefer email?</span>
         <a href={`mailto:${site.email}`} className="link-rule text-[0.95rem]">
           {site.email}
         </a>
-        <button type="button" onClick={copyEmail} className="link-rule text-[0.95rem]">
+        <button
+          type="button"
+          onClick={copyEmail}
+          className="link-rule text-[0.95rem]"
+        >
           {copied ? "Copied" : "Copy address"}
         </button>
       </div>
