@@ -154,7 +154,15 @@ export function ContactForm({ mode = "direct" }: { mode?: Mode }) {
 
   return (
     <div>
-      <form onSubmit={onSubmit} className="grid-12" aria-busy={sending}>
+      {/* method and action matter before hydration: without them a submit is
+          a GET that puts the visitor's details in the URL. */}
+      <form
+        method="post"
+        action="/api/contact"
+        onSubmit={onSubmit}
+        className="grid-12"
+        aria-busy={sending}
+      >
         {/* Honeypot: invisible to people and to assistive technology. A bot
             that fills every field fills this one too. */}
         <div aria-hidden="true" className="hidden">

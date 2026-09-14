@@ -15,7 +15,7 @@ import { site } from "@/content/portfolio";
  *                   can only deliver to the address that owns the Resend
  *                   account. Set it once a domain is verified in Resend.
  *
- * Every response is honest about what happened: 200 only after Resend has
+ * Every response is honest about what happened: success only after Resend has
  * accepted the message. The one deliberate exception is the honeypot — a bot
  * that fills the hidden field is told "ok" so it has nothing to learn from.
  */
@@ -57,16 +57,58 @@ const escapeHtml = (value: string) =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 
+type Outcome = { status: number; body: { ok: boolean; error?: string } };
+
+const ok: Outcome = { status: 200, body: { ok: true } };
+const fail = (status: number, error: string): Outcome => ({
+  status,
+  body: { ok: false, error },
+});
+
+/**
+ * Two ways in, one set of rules.
+ *
+ * The page normally posts JSON with fetch and renders the outcome itself. But
+ * a visitor who submits before the page’s JavaScript has loaded (or with it
+ * off) sends a plain form post instead. That used to be a GET, which put
+ * their name, email and message in the URL and delivered nothing. The form
+ * now declares method="post" action="/api/contact", and a form post gets a
+ * 303 redirect to a confirmation page rather than a JSON body.
+ */
 export async function POST(request: Request) {
+  const type = request.headers.get("content-type") ?? "";
+  const isForm =
+    type.includes("application/x-www-form-urlencoded") ||
+    type.includes("multipart/form-data");
+
   let payload: Record<string, unknown>;
   try {
-    payload = await request.json();
+    payload = isForm
+      ? Object.fromEntries(await request.formData())
+      : await request.json();
   } catch {
-    return Response.json({ ok: false, error: "invalid" }, { status: 400 });
+    payload = {};
   }
 
+  const outcome =
+    payload && typeof payload === "object"
+      ? await deliver(payload, request)
+      : fail(400, "invalid");
+
+  if (isForm) {
+    const target = outcome.body.ok ? "/contact/sent" : "/contact/not-sent";
+    return Response.redirect(new URL(target, request.url), 303);
+  }
+
+  return Response.json(outcome.body, { status: outcome.status });
+}
+
+async function deliver(
+  payload: Record<string, unknown>,
+  request: Request,
+): Promise<Outcome> {
   if (clean(payload.botcheck)) {
-    return Response.json({ ok: true });
+    return ok;
   }
 
   const name = oneLine(clean(payload.name));
@@ -84,21 +126,18 @@ export async function POST(request: Request) {
     problem.length > LIMITS.problemMax;
 
   if (invalid) {
-    return Response.json({ ok: false, error: "invalid" }, { status: 400 });
+    return fail(400, "invalid");
   }
 
   const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   if (rateLimited(ip)) {
-    return Response.json({ ok: false, error: "rate_limited" }, { status: 429 });
+    return fail(429, "rate_limited");
   }
 
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    return Response.json(
-      { ok: false, error: "not_configured" },
-      { status: 503 },
-    );
+    return fail(503, "not_configured");
   }
 
   const signature = `${name}${company ? ` · ${company}` : ""}`;
@@ -140,15 +179,12 @@ export async function POST(request: Request) {
         response.status,
         await response.text(),
       );
-      return Response.json(
-        { ok: false, error: "send_failed" },
-        { status: 502 },
-      );
+      return fail(502, "send_failed");
     }
   } catch (error) {
     console.error("contact: resend unreachable", error);
-    return Response.json({ ok: false, error: "send_failed" }, { status: 502 });
+    return fail(502, "send_failed");
   }
 
-  return Response.json({ ok: true });
+  return ok;
 }
