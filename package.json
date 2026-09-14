@@ -11,18 +11,15 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:all": "npm run test && npm run test:e2e"
+    "test:all": "npm run test && npm run test:e2e",
+    "knip": "knip"
   },
   "dependencies": {
-    "@radix-ui/react-dialog": "^1.1.23",
-    "@radix-ui/react-tabs": "^1.1.21",
-    "@types/three": "^0.185.4",
     "caniuse-lite": "^1.0.30001810",
     "motion": "^13.2.0",
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "three": "^0.186.0"
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
@@ -32,6 +29,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
+    "knip": "^6.35.1",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.0.0"

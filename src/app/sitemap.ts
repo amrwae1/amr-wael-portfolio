@@ -9,8 +9,6 @@ import { caseStudies, karmaStatus } from "@/content/case-studies";
  * project entries from the case-study content means a new project appears here
  * the moment it is added, instead of being silently missing from the sitemap
  * until someone remembers this file exists.
- *
- * `/lab` is deliberately absent — it is `noindex` and not part of the portfolio.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

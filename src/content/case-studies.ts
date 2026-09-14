@@ -19,7 +19,7 @@ import type { EvidenceKind } from "./portfolio";
  *   that could actually change the answer.
  */
 
-export type Figure = {
+type Figure = {
   src: string;
   width: number;
   height: number;
@@ -29,7 +29,7 @@ export type Figure = {
   evidence?: EvidenceKind;
 };
 
-export type Decision = {
+type Decision = {
   heading: string;
   body: string;
   figure?: Figure;

@@ -177,6 +177,11 @@ test.describe("project pages", () => {
 });
 
 test.describe("not found", () => {
+  test("the retired /lab experiment is no longer served", async ({ page }) => {
+    const res = await page.goto("/lab/hero");
+    expect(res?.status()).toBe(404);
+  });
+
   test("returns 404 on the site's own ground, with a way back", async ({
     page,
   }) => {
