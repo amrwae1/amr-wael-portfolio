@@ -32,7 +32,9 @@ test.describe("mobile", () => {
     for (const path of [
       "/",
       "/projects",
+      "/projects/mazboot",
       "/projects/valora",
+      "/projects/career-os",
       "/projects/karma-shop",
       "/about",
       "/contact",
@@ -51,7 +53,7 @@ test.describe("mobile", () => {
     page,
   }) => {
     await page.goto("/");
-    const card = page.locator('a.card[href="/projects/booking"]');
+    const card = page.locator('a.card[href="/projects/noon"]');
     await card.scrollIntoViewIfNeeded();
     const box = (await card.boundingBox())!;
     expect(box.width / box.height).toBeLessThan(1);

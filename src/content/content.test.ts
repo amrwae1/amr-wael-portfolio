@@ -49,6 +49,10 @@ describe("project cards", () => {
     );
   });
 
+  it("marks Mazboot as a live product at an early stage, not a concept", () => {
+    expect(cardBySlug("mazboot")?.status).toBe("Own product · Live · Early stage");
+  });
+
   it("makes no measured-outcome claims in the impact lines", () => {
     const claims =
       /\d+\s?%|increase[sd]?|boost|revenue grew|conversion rate|proven/i;
@@ -114,6 +118,12 @@ describe("case studies", () => {
     );
   });
 
+  it("states that Mazboot has no measured outcome yet", () => {
+    const mazboot = caseStudyBySlug("mazboot");
+    expect(mazboot?.status).toMatch(/no measured outcome yet/);
+    expect(mazboot?.assumed).toMatch(/has been measured/);
+  });
+
   it("discloses the inconsistent distance reference in Booking.com", () => {
     const booking = caseStudyBySlug("booking");
     expect(booking?.constraints.join(" ")).toMatch(/reference point changes/);
@@ -135,8 +145,8 @@ describe("nextProject", () => {
   it("returns the display name alongside the slug", () => {
     expect(nextProject("valora")).toEqual({ slug: "noon", name: "Noon" });
     expect(nextProject("karma-shop")).toEqual({
-      slug: "valora",
-      name: "Valora",
+      slug: "mazboot",
+      name: "Mazboot",
     });
   });
 });

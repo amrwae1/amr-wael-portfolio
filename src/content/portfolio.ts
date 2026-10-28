@@ -90,7 +90,8 @@ export const site = {
 
   email: "amrwael322@gmail.com",
 
-  /** Verified: the file in `public/` is the CV Amr supplied, unaltered. */
+  /** The file in `public/` is the October 2026 CV, built from facts Amr
+      confirmed (source: outputs/cv-2026-10 beside this repo). */
   resume: {
     href: "/Amr-Wael-Product-Designer-CV.pdf",
     label: "Résumé (PDF)",
@@ -116,7 +117,7 @@ export const hero = {
     "I work through the layers behind a problem — context, constraints, and product systems — to find the approach that holds, then make it clear and usable.",
   role: "Product Designer · Cairo",
   claim: "I design the decisions inside complex products.",
-  lead: "Self-directed B2B and AI concepts, designed around business goals.",
+  lead: "A live B2B product and self-directed AI concepts, designed around business goals.",
   /* The hero carries one action now, and the component names it directly.
      The old primary/secondary pair is gone with the second CTA: a hero that
      offers two destinations has not decided what it wants the visitor to do. */

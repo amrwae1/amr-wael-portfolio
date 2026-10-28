@@ -14,6 +14,20 @@ async function settledScrollY(page: Page) {
   return last;
 }
 
+const mazboot = {
+  slug: "mazboot",
+  title: "Mazboot",
+  impact: "Show store owners the profit they kept, not the sales the dashboard counted.",
+  status: "Own product · Live · Early stage",
+};
+
+const careerOs = {
+  slug: "career-os",
+  title: "Career OS",
+  impact: "Keep one evidence-producing move in front of a job search every week.",
+  status: "Self-directed tool · Live · Untested",
+};
+
 const projects = [
   {
     slug: "valora",
@@ -42,6 +56,12 @@ const projects = [
   },
 ];
 
+/** Every project, in the order the Project Center lists them. */
+const allProjects = [mazboot, ...projects.slice(0, 3), careerOs, projects[3]];
+
+/** The four the home page selects, in the order it shows them. */
+const homeProjects = [mazboot, projects[0], projects[1], projects[3]];
+
 test.describe("home", () => {
   test("presents each project once, as a card, with no screenshots", async ({
     page,
@@ -59,12 +79,12 @@ test.describe("home", () => {
     await expect(cards).toHaveCount(4);
     expect(
       await cards.evaluateAll((els) => els.map((e) => e.getAttribute("href"))),
-    ).toEqual(projects.map((p) => `/projects/${p.slug}`));
+    ).toEqual(homeProjects.map((p) => `/projects/${p.slug}`));
 
     await expect(work.locator("img")).toHaveCount(0);
     await expect(page.locator("article")).toHaveCount(0);
 
-    for (const project of projects) {
+    for (const project of homeProjects) {
       const card = work.locator(`a.card[href="/projects/${project.slug}"]`);
       await expect(card).toContainText(project.impact);
       await expect(card).toContainText(project.status);
@@ -85,7 +105,7 @@ test.describe("home", () => {
       .evaluateAll((els) => els.map((e) => e.id));
     expect(order).toEqual(["top", "work", "about", "contact"]);
     await expect(
-      page.locator("#work").getByRole("link", { name: /All four projects/ }),
+      page.locator("#work").getByRole("link", { name: /All six projects/ }),
     ).toHaveAttribute("href", "/projects");
   });
 
@@ -139,7 +159,7 @@ test.describe("home", () => {
 });
 
 test.describe("project pages", () => {
-  for (const project of projects) {
+  for (const project of allProjects) {
     test(`${project.title} opens with the card's title, impact and status`, async ({
       page,
     }) => {
@@ -170,9 +190,13 @@ test.describe("project pages", () => {
     expect(firstImageTop).toBeGreaterThan(responseTop);
   });
 
-  test("the Project Center lists all four projects", async ({ page }) => {
+  test("the Project Center lists all six projects, in order", async ({ page }) => {
     await page.goto("/projects");
-    await expect(page.locator("a.card")).toHaveCount(4);
+    const cards = page.locator("a.card");
+    await expect(cards).toHaveCount(6);
+    expect(
+      await cards.evaluateAll((els) => els.map((e) => e.getAttribute("href"))),
+    ).toEqual(allProjects.map((p) => `/projects/${p.slug}`));
   });
 });
 
