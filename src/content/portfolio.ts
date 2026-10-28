@@ -93,7 +93,7 @@ export const site = {
   /** The file in `public/` is the October 2026 CV, built from facts Amr
       confirmed (source: outputs/cv-2026-10 beside this repo). */
   resume: {
-    href: "/Amr-Wael-Product-Designer-CV.pdf",
+    href: "/Amr-Wael-Product-Builder-CV.pdf",
     label: "Résumé (PDF)",
   },
 } as const;
