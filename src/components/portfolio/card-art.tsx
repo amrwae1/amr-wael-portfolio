@@ -2,22 +2,24 @@ import type { CSSProperties } from "react";
 import type { ProjectCardArt, ProjectCardEntry } from "@/content/project-cards";
 
 /**
- * The four brand posters.
+ * The six brand posters.
  *
  * Each is a flat SVG drawn from the project's *mechanism* rather than its
  * subject — no brains or neural nets for the AI project, no carts for the
  * marketplace, no planes or pins for the travel one, no logo for the client.
  *
+ *   Mazboot  the dashboard's number  → stepped down to what was kept
  *   Valora   many signals            → one defensible priority
  *   Noon     scattered uncertainty   → a single point of commitment
  *   Booking  two separate frames     → one visible comparison
+ *   Career   fourteen days of effort → one piece of filed proof
  *   Karma    real constraints        → an emerging, unfinished structure
  *
  * Every poster has two states, and the resting one is already a complete
  * composition: the card must read on a phone, with no hover, as well as it does
  * on a desktop. The resolved state is driven by one custom property, `--on`
  * (0 at rest, 1 resolved), set on `.card` by hover, keyboard focus, touch
- * devices and reduced motion alike — so the four ways of arriving at a card
+ * devices and reduced motion alike — so the ways of arriving at a card
  * cannot drift apart. See the card system in globals.css.
  *
  * All motion is transform or opacity. The posters are `aria-hidden`: the card
@@ -33,7 +35,14 @@ import type { ProjectCardArt, ProjectCardEntry } from "@/content/project-cards";
 type Props = { art: ProjectCardArt; entry: ProjectCardEntry; className?: string };
 
 export function CardArt({ art, entry, className = "card-art" }: Props) {
-  const Art = { valora: ValoraArt, noon: NoonArt, booking: BookingArt, karma: KarmaArt }[art];
+  const Art = {
+    mazboot: MazbootArt,
+    valora: ValoraArt,
+    noon: NoonArt,
+    booking: BookingArt,
+    career: CareerArt,
+    karma: KarmaArt,
+  }[art];
   return (
     <div className={className} aria-hidden="true">
       <Art entry={entry} />
@@ -54,6 +63,89 @@ function Field({ children }: { children: React.ReactNode }) {
     >
       {children}
     </svg>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Mazboot — the dashboard's figure, stepped down to the profit that was kept  */
+/* -------------------------------------------------------------------------- */
+
+function MazbootArt({ entry }: { entry: ProjectCardEntry }) {
+  const p = entry.palette;
+  const id = `${entry.slug}-art`;
+  const baseline = 250;
+  const w = 24;
+  const x = (n: number) => 46 + n * 36;
+
+  /* The tops of each step, left to right: what the dashboard counted, then
+     each thing it counted but the owner never kept. */
+  const levels = [80, 106, 128, 158, 182, 204];
+
+  return (
+    <Field>
+      <defs>
+        <radialGradient id={`${id}-halo`} gradientUnits="userSpaceOnUse" cx="196" cy="176" r="164">
+          <stop offset="0" stopColor={p.second} stopOpacity="0.6" />
+          <stop offset="0.55" stopColor={p.tint} stopOpacity="0.28" />
+          <stop offset="1" stopColor={p.tint} stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      <rect className="art-halo" x="-160" y="-160" width="640" height="640" fill={`url(#${id}-halo)`} />
+
+      <line x1="34" y1={baseline + 6} x2="290" y2={baseline + 6} stroke={p.light} opacity="0.22" />
+
+      {/* The dashboard's figure: tall, and pale, because it is not the money. */}
+      <rect x={x(0)} y={levels[0]} width={w} height={baseline - levels[0]} rx="3" fill={p.light} opacity="0.3" />
+
+      {/* Each deduction hangs from the level of the one before it. At rest they
+          float above their places; resolved, they drop into the cascade. */}
+      {levels.slice(0, -1).map((top, i) => (
+        <rect
+          key={top}
+          className="m-step"
+          style={vars({ "--i": i })}
+          x={x(i + 1)}
+          y={top}
+          width={w}
+          height={levels[i + 1] - top}
+          rx="2"
+          fill={p.second}
+        />
+      ))}
+
+      <path
+        className="m-trail"
+        d={levels
+          .slice(0, -1)
+          .map((top, i) => `M${x(i) + w} ${top} H${x(i + 1)}`)
+          .join(" ")}
+        stroke={p.light}
+        strokeWidth="1"
+        strokeDasharray="2 3"
+      />
+
+      {/* What was kept: small, solid, and the one thing in full colour. */}
+      <rect
+        className="m-real"
+        x={x(6)}
+        y={levels[5]}
+        width={w}
+        height={baseline - levels[5]}
+        rx="3"
+        fill={p.bright}
+      />
+      <g className="m-check">
+        <circle cx={x(6) + w / 2} cy={levels[5] - 26} r="13" stroke={p.bright} strokeWidth="1.5" />
+        <path
+          d={`M${x(6) + w / 2 - 6} ${levels[5] - 26} l4 4 l8 -9`}
+          stroke={p.light}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+    </Field>
   );
 }
 
@@ -299,6 +391,88 @@ function BookingArt({ entry }: { entry: ProjectCardEntry }) {
         <line x1="250" y1="148" x2="262" y2="148" />
         <line x1="250" y1="202" x2="262" y2="202" />
       </g>
+    </Field>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Career OS — fourteen days of effort, one piece of proof filed               */
+/* -------------------------------------------------------------------------- */
+
+function CareerArt({ entry }: { entry: ProjectCardEntry }) {
+  const p = entry.palette;
+  const id = `${entry.slug}-art`;
+  const cell = 18;
+  const step = 25;
+  const days = Array.from({ length: 14 }, (_, i) => ({
+    x: 40 + (i % 7) * step,
+    y: 128 + Math.floor(i / 7) * step,
+    i,
+  }));
+  const frame = { x: 232, y: 124, size: 52 };
+
+  return (
+    <Field>
+      <defs>
+        <radialGradient id={`${id}-halo`} gradientUnits="userSpaceOnUse" cx="200" cy="150" r="164">
+          <stop offset="0" stopColor={p.second} stopOpacity="0.6" />
+          <stop offset="0.55" stopColor={p.tint} stopOpacity="0.28" />
+          <stop offset="1" stopColor={p.tint} stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      <rect className="art-halo" x="-160" y="-160" width="640" height="640" fill={`url(#${id}-halo)`} />
+
+      {/* A folio's double rule, above and below. */}
+      <g stroke={p.light} opacity="0.3">
+        <line x1="40" y1="92" x2="284" y2="92" />
+        <line x1="40" y1="96" x2="284" y2="96" />
+        <line x1="40" y1="208" x2="284" y2="208" />
+      </g>
+
+      {/* Fourteen days. At rest only the first is done; resolved, the run fills
+          in order. */}
+      {days.map((d) => (
+        <g key={d.i}>
+          <rect x={d.x} y={d.y} width={cell} height={cell} stroke={p.light} strokeWidth="1" opacity="0.45" />
+          <rect
+            className={d.i === 0 ? undefined : "c-day"}
+            style={vars({ "--i": d.i })}
+            x={d.x + 3}
+            y={d.y + 3}
+            width={cell - 6}
+            height={cell - 6}
+            fill={d.i === 0 ? p.bright : p.second}
+          />
+        </g>
+      ))}
+
+      {/* The days only count once they leave something a reviewer can open. */}
+      <path
+        className="c-link"
+        d={`M${days[13].x + cell + 6} ${days[13].y + cell / 2} H${frame.x - 6}`}
+        stroke={p.bright}
+        strokeWidth="1.25"
+        strokeDasharray="2 4"
+      />
+
+      <rect
+        x={frame.x}
+        y={frame.y}
+        width={frame.size}
+        height={frame.size}
+        stroke={p.light}
+        strokeWidth="1.25"
+        opacity="0.7"
+      />
+      <rect
+        className="c-proof"
+        x={frame.x + 10}
+        y={frame.y + 10}
+        width={frame.size - 20}
+        height={frame.size - 20}
+        fill={p.bright}
+      />
     </Field>
   );
 }

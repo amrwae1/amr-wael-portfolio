@@ -7,8 +7,9 @@
  * repeats the same `impact` line in its opening so the two read as one thought.
  *
  * `impact` is an intended outcome, never a measured one. `status` is the honest
- * counterweight printed beside it on every card: none of the three concepts has
- * been tested, and the client engagement is still running.
+ * counterweight printed beside it on every card: Mazboot is live but early, none
+ * of the self-directed concepts or tools has been tested with users, and the
+ * client engagement is still running.
  *
  * No product screenshots here on purpose. A cropped interface at card size
  * shows nothing legible; an abstract system built from the project's own idea
@@ -21,7 +22,7 @@
 
 import type { CSSProperties } from "react";
 
-export type ProjectCardArt = "valora" | "noon" | "booking" | "karma";
+export type ProjectCardArt = "mazboot" | "valora" | "noon" | "booking" | "career" | "karma";
 
 export type ProjectPalette = {
   /** The deep ground colour: the wash, and the project page's opening tint. */
@@ -48,6 +49,17 @@ export type ProjectCardEntry = {
 };
 
 export const projectCardEntries: ProjectCardEntry[] = [
+  {
+    slug: "mazboot",
+    href: "/projects/mazboot",
+    category: "B2B SaaS · Commerce · Arabic",
+    title: "Mazboot",
+    impact: "Show store owners the profit they kept, not the sales the dashboard counted.",
+    status: "Own product · Live · Early stage",
+    art: "mazboot",
+    // Deep teal, bright teal, mint white — the product's own identity colour.
+    palette: { tint: "#0b4f4c", bright: "#2bc4b4", second: "#007d79", light: "#e2efec" },
+  },
   {
     slug: "valora",
     href: "/projects/valora",
@@ -80,6 +92,17 @@ export const projectCardEntries: ProjectCardEntry[] = [
     art: "booking",
     // Deep cobalt, cool blue, cool white.
     palette: { tint: "#123a9e", bright: "#6aa6ff", second: "#2459d6", light: "#e6effa" },
+  },
+  {
+    slug: "career-os",
+    href: "/projects/career-os",
+    category: "Personal tool · Decision support",
+    title: "Career OS",
+    impact: "Keep one evidence-producing move in front of a job search every week.",
+    status: "Self-directed tool · Live · Untested",
+    art: "career",
+    // Deep olive, field green, parchment.
+    palette: { tint: "#39442a", bright: "#b9c46a", second: "#6d7a3c", light: "#ece8d8" },
   },
   {
     slug: "karma-shop",

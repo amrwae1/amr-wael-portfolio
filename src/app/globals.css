@@ -1347,6 +1347,60 @@
     transition: opacity var(--card-slow) var(--card-ease);
   }
 
+  /* Mazboot: the deductions drop into the cascade, then what was kept fills. */
+  .m-step {
+    transform: translateY(calc((1 - var(--on)) * -18px));
+    opacity: calc(0.35 + var(--on) * 0.45);
+    transition:
+      transform var(--card-slow) var(--card-ease),
+      opacity var(--card-slow) var(--card-ease);
+    transition-delay: calc(var(--i) * 50ms * var(--on));
+  }
+
+  .m-trail {
+    opacity: calc(var(--on) * 0.5);
+    transition: opacity 420ms var(--card-ease);
+    transition-delay: calc(var(--on) * 260ms);
+  }
+
+  .m-real {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    transform: scaleY(calc(0.4 + var(--on) * 0.6));
+    transition: transform var(--card-slow) var(--card-ease);
+    transition-delay: calc(var(--on) * 200ms);
+  }
+
+  .m-check {
+    opacity: var(--on);
+    transition: opacity 380ms var(--card-ease);
+    transition-delay: calc(var(--on) * 380ms);
+  }
+
+  /* Career OS: the run of days fills in order, then the proof is filed. */
+  .c-day {
+    opacity: calc(var(--on) * 0.85);
+    transition: opacity 260ms var(--card-ease);
+    transition-delay: calc(var(--i) * 28ms * var(--on));
+  }
+
+  .c-link {
+    opacity: calc(var(--on) * 0.75);
+    transition: opacity 360ms var(--card-ease);
+    transition-delay: calc(var(--on) * 380ms);
+  }
+
+  .c-proof {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(calc(0.35 + var(--on) * 0.65));
+    opacity: calc(0.3 + var(--on) * 0.7);
+    transition:
+      transform 420ms var(--card-ease),
+      opacity 420ms var(--card-ease);
+    transition-delay: calc(var(--on) * 440ms);
+  }
+
   /* Valora: the field quietens, one signal rises through the threshold. */
   .v-field {
     opacity: calc(1 - var(--on) * 0.45);

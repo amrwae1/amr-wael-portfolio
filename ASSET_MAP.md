@@ -28,6 +28,26 @@ them nothing. Total shipped media: **942 KB** across 14 WebP files.
 | `system-foundations.webp` | `design-system-foundations.png` | 2160×1620 | full frame | 2160×1620 | 74 KB | Valora — system foundation | Solution proof | WebP q82 |
 | `system-components.webp` | `design-system-components.png` | 2160×1620 | full frame | 2160×1620 | 59 KB | Valora — system foundation | Solution proof | WebP q82 |
 
+## Mazboot and Career OS — live captures (added 2026-10-28)
+
+Both are Amr's own live products. The figures are screenshots of the public
+sites taken on 28 Oct 2026 with Playwright (installed Chrome), then composed
+with sharp. The capture script lives outside the repo, at
+`../work/portfolio-update-2026-10/capture.cjs`; re-run it to refresh them.
+Mazboot sections fade in on scroll, so each section is scrolled into view and
+captured on its own, with the sticky call-to-action bar hidden.
+
+| Destination | Source | Output | Size | Section | Evidence |
+|---|---|---|---|---|---|
+| `mazboot/profit-waterfall.webp` | mazboot.com.co sections 1–2, 390px phone @2x | 1400×1100 | 66 KB | Mazboot — dashboard number to real profit | Solution proof |
+| `mazboot/decisions.webp` | mazboot.com.co sections 5–6 | 1400×1100 | 50 KB | Mazboot — questions, then actions | Solution proof |
+| `mazboot/connect-and-trust.webp` | mazboot.com.co sections 7–8 | 1400×1100 | 57 KB | Mazboot — connect and what is never stored | Reasoning proof |
+| `career-os/execute.webp` | career-os-live.vercel.app, 1440px, top | 1440×900 | 61 KB | Career OS — the week opens on one move | Solution proof |
+| `career-os/evidence.webp` | career-os-live.vercel.app, 1440px, last 1100px | 1440×1100 | 58 KB | Career OS — a week measured in proof | Solution proof |
+
+The Mazboot figures show an illustrative month and a test store, both labelled
+as such on the live page. No real store data appears in any capture.
+
 ## Booking.com — real assets in use
 
 Provenance confirmed by Amr as his own work. Sources are the two files under

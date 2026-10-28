@@ -66,9 +66,101 @@ export type CaseStudy = {
 
 export const caseStudies: CaseStudy[] = [
   /* ---------------------------------------------------------------------- */
+  /* Mazboot is the one product here that is live with real stores, so its
+     limits are different in kind: the boundary is not "untested concept" but
+     "early, with no measured outcome yet". Status follows what Amr chose to
+     publish (28 Oct 2026): what was built, and an honest stage — no outreach
+     counts, prices or customer names. */
+  {
+    slug: "mazboot",
+    index: "01",
+    name: "Mazboot",
+    category: "B2B SaaS · Commerce · Arabic",
+    overview:
+      "A profit monitor for online stores in Egypt. It connects read-only to EasyOrders, Shopify or WooCommerce, follows every order to delivery or return, and shows the profit the store actually kept — after cancellations, returns, shipping and ad spend.",
+    role: "Founder — product design, build with AI-assisted engineering, go-to-market",
+    scope: "Product definition, Arabic RTL design system, landing page, profit report, store connection, alerts, pricing",
+    type: "Own product",
+    status: "Live at mazboot.com.co since September 2026 · first store connected · no measured outcome yet",
+    problem: [
+      "Store dashboards count an order as a sale the moment it is placed. With cash on delivery, orders are cancelled, go undelivered or come back after they have been counted — so the number an owner reads every morning is not the money that reached them.",
+      "Owners still make real decisions on that number: which product to push, where to spend on ads, when to stop selling. The costs that change the answer — round-trip shipping, returns, ad spend, stock — live in different tools, and nobody puts them together for a small store.",
+    ],
+    decisionToSupport:
+      "Which product is actually making money once returns, shipping and ads are counted — and what needs the owner's attention today, while there is still time to act on it.",
+    objective:
+      "Replace the dashboard's sales figure with the profit the store kept, and turn every gap between the two into a specific action — without asking the owner to export files or learn a new tool.",
+    hypothesis:
+      "The working hypothesis is that owners trust the dashboard number because nothing shows them the gap. Early conversations suggest the harder barrier is trust and effort before connecting a store, not the value of the report — which is why the design leans on read-only access, a free first report and a founder reachable on WhatsApp. This is a reading of early conversations, not a measured finding.",
+    decisions: [
+      {
+        heading: "Take the dashboard's number apart, line by line",
+        body: "The landing page opens on a sales figure and subtracts, in plain Egyptian Arabic, each thing the dashboard counted but the owner never kept: cancellations, orders not yet delivered, returns, the cost of goods for delivered orders only, shipping, return shipping and ads. Beside it, a worked example uses three orders — small enough to check by hand, which is the point. Trust in the number is earned by showing the arithmetic, not by asserting it.",
+        figure: {
+          src: "/media/mazboot/profit-waterfall.webp",
+          width: 1400,
+          height: 1100,
+          evidence: "solution",
+          caption: "From the dashboard's number to the real one",
+          note: "Live landing page, phone width. The figures are an illustrative month and a test store, labelled as such on the page.",
+          alt: "Two phone screens of the Mazboot landing page in Arabic. Left: a headline reading your real profit, exactly, above a card that starts from 50,000 pounds of sales and subtracts cancellations, undelivered orders, returns, cost of goods, shipping, return shipping and ads to reach a real profit of 6,000 pounds, with a bar chart of profit per day. Right: a comparison of three orders where the dashboard shows 360 pounds of profit and Mazboot shows 180, with the subtraction written out line by line.",
+        },
+      },
+      {
+        heading: "Every screen answers a question the owner already asks",
+        body: "The product is organised around four questions owners ask every day — which product is losing money, where to put ad spend, what returns and shipping are costing, and where to start. Each ends in an action rather than a chart, and the report ranks what needs attention by its value in pounds. State, then the evidence behind it, then what to do.",
+        figure: {
+          src: "/media/mazboot/decisions.webp",
+          width: 1400,
+          height: 1100,
+          evidence: "solution",
+          caption: "Questions, then actions",
+          alt: "Two phone screens of the Mazboot landing page in Arabic. Left: four cards, each a question an owner asks — which product is losing me money, where should I spend on ads, how much are returns and shipping costing, where do I start — each ending in an action link. Right: the contents of the report as expandable rows: profit per product, returns and their cost, products without a cost, real Bosta charges, orders with the wrong status, a mobile app view, and stock counting from the phone.",
+        },
+      },
+      {
+        heading: "Trust is designed before the first screen",
+        body: "Connecting takes three steps from a WhatsApp link, with one approval inside the store's own platform. Access is read-only; customer names, numbers and addresses are deleted on arrival, before anything is stored; an uploaded file is read on the owner's device and never sent to a server. Because the barrier is trust, the guarantees are product behaviour first and copy second.",
+        figure: {
+          src: "/media/mazboot/connect-and-trust.webp",
+          width: 1400,
+          height: 1100,
+          evidence: "reasoning",
+          caption: "Three steps to connect, and what is never stored",
+          alt: "Two phone screens of the Mazboot landing page in Arabic. Left: three numbered steps — we send you a connection link on WhatsApp, you approve once in EasyOrders, Shopify or WooCommerce, and your report updates itself. Right: four guarantees — read only, customer data is not stored, uploaded files stay on your device, and you can cancel at any time.",
+        },
+      },
+      {
+        heading: "A borrowed system, changed only where the goal needed it",
+        body: "The interface is built on IBM Carbon, a system made for data-dense business tools, with Shopify Polaris rejected because its licence limits use to Shopify apps. The changes are deliberate: a teal accent so that green and red keep meaning gain and loss, Arabic right-to-left with IBM Plex Sans Arabic and taller line height, 48-pixel touch targets because owners open it from WhatsApp on a phone, and money set in tabular digits so columns of pounds line up.",
+      },
+    ],
+    constraints: [
+      "Built and run by one person on a free hosting tier. The sync engine had to fit strict per-run query and CPU limits, which set how often each store is checked.",
+      "Each platform exposes different data, so every claim on the site is kept to what works on that platform today — courier data is Bosta only, and ad spend comes from an uploaded Meta report until direct access is approved.",
+      "Arabic first and phone first. Owners live in WhatsApp, so links, alerts and the report are designed for a phone opened from a chat, not a desktop admin panel.",
+    ],
+    delivered: [
+      "A live landing page and pricing in Egyptian Arabic, right to left",
+      "Read-only store connection for EasyOrders, Shopify and WooCommerce, plus a file upload for any other platform",
+      "A profit report per product, after cancellations, returns, shipping and ad spend, ranked by what needs action",
+      "Phone alerts when orders stop arriving, the courier link fails, or stock hits zero with orders open",
+      "An Arabic, right-to-left adaptation of the IBM Carbon design system",
+    ],
+    assumed:
+      "Mazboot is live but early. No outcome — profit recovered, time saved, decisions changed — has been measured for any store. The store story on the landing page is one owner's account, shared with permission; it shows the problem, not a result of the product.",
+    validation:
+      "Put a connected store's monthly report next to the owner's own courier settlements and bank deposits, and check whether the profit Mazboot shows matches the money that actually arrived. Then watch the following week: did the owner stop, cut or push a product because of the report? Accuracy against settlements is the claim; a changed decision is the value.",
+    external: {
+      label: "Visit the live product",
+      href: "https://mazboot.com.co",
+    },
+  },
+
+  /* ---------------------------------------------------------------------- */
   {
     slug: "valora",
-    index: "01",
+    index: "02",
     name: "Valora",
     category: "Performance intelligence · B2B · AI",
     overview:
@@ -162,7 +254,7 @@ export const caseStudies: CaseStudy[] = [
   /* ---------------------------------------------------------------------- */
   {
     slug: "noon",
-    index: "02",
+    index: "03",
     name: "Noon",
     category: "E-commerce · Mobile",
     overview:
@@ -255,7 +347,7 @@ export const caseStudies: CaseStudy[] = [
   /* ---------------------------------------------------------------------- */
   {
     slug: "booking",
-    index: "03",
+    index: "04",
     name: "Booking.com",
     category: "Travel · iOS · Conceptual",
     overview:
@@ -317,6 +409,76 @@ export const caseStudies: CaseStudy[] = [
       href: "https://www.behance.net/gallery/243357691/UI-Redesign-Case-Study-Bookingcom-iOS",
     },
   },
+
+  /* ---------------------------------------------------------------------- */
+  {
+    slug: "career-os",
+    index: "05",
+    name: "Career OS",
+    category: "Personal tool · Decision support",
+    overview:
+      "A career operating system I designed and built for my own job search: a fourteen-day sprint, a claim checklist, an opportunities log and a weekly reflection, organised around one rule — polish does not count without proof.",
+    role: "Sole designer and builder — built with AI-assisted engineering",
+    scope: "Information architecture, interaction design, visual system, web build",
+    type: "Self-directed tool",
+    status: "Live; progress saves only on the visitor's own device; not tested with other users",
+    problem: [
+      "A job search produces a lot of activity and very little evidence. Hours go into polishing screens no reviewer can verify, while the things that change a hiring decision — tested work, real users, shipped changes — keep slipping to next week.",
+      "Generic task trackers make it worse. Every task weighs the same, so a portfolio tweak and a user interview look equally done at the end of the week.",
+    ],
+    decisionToSupport:
+      "What is the single next thing to do this week that produces evidence a sceptical reviewer could inspect — and is the week actually producing any?",
+    objective:
+      "Keep one evidence-producing move in front of me at all times, and make it visible when a week produced effort but no proof.",
+    decisions: [
+      {
+        heading: "One next move, not a backlog",
+        body: "The page opens on a single next evidence move and one action to complete it. The fourteen-day sprint sits beneath it in order, with only the current step active, so the plan never competes with the step in front of it.",
+        figure: {
+          src: "/media/career-os/execute.webp",
+          width: 1440,
+          height: 900,
+          evidence: "solution",
+          caption: "The week opens on one move",
+          alt: "Career OS desktop screen. A left rail lists four stages: Execute, Validate, Expose, Reflect. The main area is headed Make this week undeniable, then a dark panel names the next evidence move, Audit every major Valora claim, with a Mark complete button, above a fourteen-day sprint list where only the first step is active and a Friday sentence prompt.",
+        },
+      },
+      {
+        heading: "Count evidence, not activity",
+        body: "The weekly glance counts only things that leave proof — quality applications, interviews, participants, usability tests and shipped work — each against a target and each with its own route to log it. Anything that is not one of these does not move a number, however long it took.",
+        figure: {
+          src: "/media/career-os/evidence.webp",
+          width: 1440,
+          height: 1100,
+          evidence: "solution",
+          caption: "A week measured in proof",
+          alt: "Career OS desktop screen, lower half. The end of the fourteen-day sprint list, a framed panel pairing a painting from The Met with the stage heading Cadence turns effort into evidence, then a This week at a glance row counting quality applications against sixty, interviews against eight, participants against eight, usability tests against six and shipped work against one, each with a Log evidence link.",
+        },
+      },
+      {
+        heading: "Four stages in the order the work happens",
+        body: "Execute, Validate, Expose and Reflect structure the navigation, and each stage is paired with an artwork from The Met's collection, credited on screen, as a prompt. The aim was a working folio that rewards returning to it, not another dashboard of empty charts.",
+      },
+    ],
+    constraints: [
+      "No account and no backend. Progress saves only to the device, which keeps it private and free to run, and means it cannot follow me between devices.",
+      "Built for one user — me — so its choices reflect my own failure modes rather than a researched audience.",
+    ],
+    delivered: [
+      "A four-stage structure: Execute, Validate, Expose, Reflect",
+      "A fourteen-day sprint with one active step at a time",
+      "A weekly evidence glance with targets and logging routes",
+      "A device-only save state with no account",
+    ],
+    assumed:
+      "This is a tool for my own use. It has not been tested with anyone else, and no claim is made that it improves a job search — including mine.",
+    validation:
+      "Give it to three early-career designers for two weeks and compare what they log with what they actually did. If the counts move only when real proof exists, and they report fewer weeks of polish without proof, the idea holds. If they game the counters or stop opening it by day four, one next move is not enough on its own.",
+    external: {
+      label: "Open the live tool",
+      href: "https://career-os-live.vercel.app",
+    },
+  },
 ];
 
 /**
@@ -329,7 +491,7 @@ export const caseStudies: CaseStudy[] = [
  */
 export const karmaStatus = {
   slug: "karma-shop",
-  index: "04",
+  index: "06",
   name: "Karma Shop",
   category: "Real client engagement",
   overview:

@@ -5,7 +5,18 @@ import { HeroStage } from "@/components/portfolio/hero-stage";
 import { ContactInvitation } from "@/components/portfolio/contact-invitation";
 import { Reveal } from "@/components/portfolio/reveal";
 import { ProjectCard } from "@/components/portfolio/project-card";
-import { projectCardEntries } from "@/content/project-cards";
+import { cardBySlug, type ProjectCardEntry } from "@/content/project-cards";
+
+/* The home page selects four of the projects; the Project Center shows all of
+   them. Picked by slug, so reordering the full list cannot reshuffle this one. */
+function pick(slug: string): ProjectCardEntry {
+  const entry = cardBySlug(slug);
+  if (!entry) throw new Error(`Home page selects unknown project "${slug}"`);
+  return entry;
+}
+const flagship = pick("mazboot");
+const peers = [pick("valora"), pick("noon")];
+const quiet = pick("karma-shop");
 
 /**
  * The home page: a landing page, not a collection of case studies.
@@ -55,34 +66,34 @@ export default function Home() {
               Four products. Four decisions made clearer.
             </h2>
             <p className="measure mt-7 max-w-[52ch] text-lead leading-[1.45] text-text">
-              Three self-directed concepts and one client engagement. Each project
-              shows the intended effect, the evidence behind it, and what remains
-              untested.
+              One live product of my own, two self-directed concepts and one client
+              engagement. Each project shows the intended effect, the evidence
+              behind it, and what remains untested.
             </p>
           </Reveal>
 
-          {/* Weighted, not uniform. Valora leads at full width; Noon and
-              Booking.com are peers; Karma Shop closes lower and quieter, the
-              right volume for work still in progress. */}
+          {/* Weighted, not uniform. Mazboot leads at full width as the one live
+              product; Valora and Noon are peers; Karma Shop closes lower and
+              quieter, the right volume for work still in progress. */}
           <ul className="shell mt-[var(--space-block)] grid list-none grid-cols-1 gap-x-[var(--space-related)] gap-y-[calc(var(--space-related)*1.35)] md:grid-cols-2 lg:mt-[calc(var(--space-block)*1.4)]">
             <Reveal as="li" variant="plate" className="md:col-span-2">
-              <ProjectCard entry={projectCardEntries[0]} scale="flagship" />
+              <ProjectCard entry={flagship} scale="flagship" />
             </Reveal>
 
-            {projectCardEntries.slice(1, 3).map((entry, i) => (
+            {peers.map((entry, i) => (
               <Reveal as="li" variant="plate" key={entry.slug} delay={i * 0.06}>
                 <ProjectCard entry={entry} />
               </Reveal>
             ))}
 
             <Reveal as="li" variant="plate" className="md:col-span-2">
-              <ProjectCard entry={projectCardEntries[3]} scale="quiet" />
+              <ProjectCard entry={quiet} scale="quiet" />
             </Reveal>
           </ul>
 
           <Reveal className="shell mt-[var(--space-block)]">
             <Link href="/projects" className="action action-primary">
-              All four projects
+              All six projects
               <span aria-hidden="true" className="arrow">
                 →
               </span>
@@ -112,16 +123,17 @@ export default function Home() {
                 id="about-preview-heading"
                 className="col-span-4 text-title leading-[1.2] tracking-[-0.02em] text-text-strong md:col-span-8 lg:col-span-5"
               >
-                Two years watching people decide things under pressure, then
-                designing for it.
+                Two and a half years watching people decide things under
+                pressure. Now building for it.
               </h2>
 
               <div className="col-span-4 md:col-span-8 lg:col-span-6 lg:col-start-7">
                 <p className="measure text-text">
-                  I work in B2B sales and customer operations at Concentrix,
-                  supporting US business customers through purchasing and account
-                  decisions. It is not a design job. It is where the problem I
-                  design for became obvious.
+                  I spent two and a half years in B2B sales and customer operations
+                  at Concentrix, supporting US business customers through
+                  purchasing and account decisions. It was not a design job; it is
+                  where the problem I design for became obvious. Now I am building
+                  Mazboot, a profit monitor for online stores in Egypt.
                 </p>
 
                 <Link href="/about" className="link-rule mt-7 text-[0.95rem]">
