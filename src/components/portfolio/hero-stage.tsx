@@ -142,7 +142,7 @@ export function HeroStage() {
           One stack, lower-left, held to a narrow measure so the footage keeps
           most of the frame. */}
       <div className="shell w-full pt-24 pb-[clamp(3rem,10vh,7rem)]">
-        <div className="max-w-[46rem]">
+        <div className="max-w-[50rem]">
           <p className="meta stage-fade text-text-muted" style={{ animationDelay: "160ms" }}>
             {hero.role}
           </p>
@@ -158,16 +158,13 @@ export function HeroStage() {
           >
             {/* Broken where it is written to break on wide screens; on narrow
                 ones each span wraps naturally and the line box goes with it. */}
-            <span className="line-mask">
-              <span className="line-rise" style={{ animationDelay: "280ms" }}>
-                I design the decisions
+            {hero.claimLines.map((line, i) => (
+              <span key={line} className="line-mask">
+                <span className="line-rise" style={{ animationDelay: `${280 + i * 120}ms` }}>
+                  {line}
+                </span>
               </span>
-            </span>
-            <span className="line-mask">
-              <span className="line-rise" style={{ animationDelay: "400ms" }}>
-                inside complex products.
-              </span>
-            </span>
+            ))}
           </h1>
 
           <p

@@ -55,7 +55,7 @@ export const projectCardEntries: ProjectCardEntry[] = [
     category: "B2B SaaS · Commerce · Arabic",
     title: "Mazboot",
     impact: "Show store owners the profit they kept, not the sales the dashboard counted.",
-    status: "Own product · Live · Early stage",
+    status: "Own product · Built solo · Live · Early stage",
     art: "mazboot",
     // Deep teal, bright teal, mint white — the product's own identity colour.
     palette: { tint: "#0b4f4c", bright: "#2bc4b4", second: "#007d79", light: "#e2efec" },

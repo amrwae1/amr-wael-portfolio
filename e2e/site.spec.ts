@@ -18,7 +18,7 @@ const mazboot = {
   slug: "mazboot",
   title: "Mazboot",
   impact: "Show store owners the profit they kept, not the sales the dashboard counted.",
-  status: "Own product · Live · Early stage",
+  status: "Own product · Built solo · Live · Early stage",
 };
 
 const careerOs = {

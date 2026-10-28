@@ -30,23 +30,30 @@ them nothing. Total shipped media: **942 KB** across 14 WebP files.
 
 ## Mazboot and Career OS — live captures (added 2026-10-28)
 
-Both are Amr's own live products. The figures are screenshots of the public
-sites taken on 28 Oct 2026 with Playwright (installed Chrome), then composed
-with sharp. The capture script lives outside the repo, at
-`../work/portfolio-update-2026-10/capture.cjs`; re-run it to refresh them.
-Mazboot sections fade in on scroll, so each section is scrolled into view and
-captured on its own, with the sticky call-to-action bar hidden.
+Both are Amr's own live products. Screenshots taken with Playwright (installed
+Chrome) and composed with sharp; the scripts live outside the repo, in
+`../work/portfolio-update-2026-10/`.
+
+**Mazboot (replaced the same day, at Amr's request: show the owner app, not the
+public site).** The owner app needs a store's private report link, so it shows a
+real store's numbers. To keep customer data out of a public portfolio, the
+captures come from Mazboot's own local preview (`node scripts/preview.mjs` in the
+Mazboot repo): the real app code running against a **fake EasyOrders store**,
+with nothing sent off the machine. Run `app-probe.cjs`, then `app-capture.cjs`.
 
 | Destination | Source | Output | Size | Section | Evidence |
 |---|---|---|---|---|---|
-| `mazboot/profit-waterfall.webp` | mazboot.com.co sections 1–2, 390px phone @2x | 1400×1100 | 66 KB | Mazboot — dashboard number to real profit | Solution proof |
-| `mazboot/decisions.webp` | mazboot.com.co sections 5–6 | 1400×1100 | 50 KB | Mazboot — questions, then actions | Solution proof |
-| `mazboot/connect-and-trust.webp` | mazboot.com.co sections 7–8 | 1400×1100 | 57 KB | Mazboot — connect and what is never stored | Reasoning proof |
+| `mazboot/app-home.webp` | owner app `#home`, top and «المطلوب منك», 390px phone @2x | 1400×1100 | 77 KB | Mazboot — home: the answer, then whose turn it is | Solution proof |
+| `mazboot/app-products-stock.webp` | owner app `#products` and `#stock` | 1400×1100 | 62 KB | Mazboot — products and stock | Solution proof |
+
+**Career OS** (`capture.cjs`, public site):
+
+| Destination | Source | Output | Size | Section | Evidence |
+|---|---|---|---|---|---|
 | `career-os/execute.webp` | career-os-live.vercel.app, 1440px, top | 1440×900 | 61 KB | Career OS — the week opens on one move | Solution proof |
 | `career-os/evidence.webp` | career-os-live.vercel.app, 1440px, last 1100px | 1440×1100 | 58 KB | Career OS — a week measured in proof | Solution proof |
 
-The Mazboot figures show an illustrative month and a test store, both labelled
-as such on the live page. No real store data appears in any capture.
+No real store or customer data appears in any capture.
 
 ## Booking.com — real assets in use
 

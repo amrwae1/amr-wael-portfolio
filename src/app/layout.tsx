@@ -23,7 +23,7 @@ const interface_ = Public_Sans({
 });
 
 const description =
-  "Product design work built on inspectable evidence. Valora, a B2B performance-intelligence concept, plus independent redesign studies for Noon and Booking.com.";
+  "Amr Wael, product builder in Cairo. Mazboot, a live profit monitor for online stores he designed, built and sells, plus B2B, AI and commerce design work with its evidence stated plainly.";
 
 /**
  * Pinned so the social card and canonical URL always resolve to the production
@@ -35,16 +35,16 @@ const siteUrl = siteOrigin;
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   alternates: { canonical: "/" },
-  title: "Amr Wael — Product design around business outcomes",
+  title: "Amr Wael — Product builder",
   description,
   authors: [{ name: "Amr Wael" }],
   openGraph: {
-    title: "Amr Wael — Product design around business outcomes",
+    title: "Amr Wael — Product builder",
     description,
     type: "website",
     locale: "en",
   },
-  twitter: { card: "summary_large_image", title: "Amr Wael — Product design", description },
+  twitter: { card: "summary_large_image", title: "Amr Wael — Product builder", description },
 };
 
 /**

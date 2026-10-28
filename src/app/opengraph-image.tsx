@@ -33,7 +33,7 @@ export default function OpenGraphImage() {
             {site.fullName}
           </div>
           <div style={{ fontSize: 20, color: "#9f988c", letterSpacing: "0.06em" }}>
-            PRODUCT DESIGNER · CAIRO
+            {hero.role.toUpperCase()}
           </div>
         </div>
 
