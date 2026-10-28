@@ -98,7 +98,7 @@ export default function Contact() {
 
       <footer className="shell mt-[var(--space-section)] border-t border-rule py-10">
         <p className="meta">
-          Amr Wael — Product designer, Cairo · {new Date().getFullYear()}
+          Amr Wael — Product builder, Cairo · {new Date().getFullYear()}
         </p>
       </footer>
     </>

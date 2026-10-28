@@ -9,7 +9,7 @@ import { Reveal } from "@/components/portfolio/reveal";
 export const metadata: Metadata = {
   title: "About — Amr Wael",
   description:
-    "Product designer in Cairo working on B2B and AI interfaces. What the projects demonstrate, what is self-directed, and how to get in touch.",
+    "Product builder in Cairo: designs, builds and ships B2B and commerce products. What the projects demonstrate, what is self-directed, and how to get in touch.",
   alternates: { canonical: "/about" },
 };
 
@@ -196,7 +196,7 @@ export default function About() {
 
       <footer className="shell mt-[var(--space-section)] border-t border-rule py-10">
         <p className="meta">
-          Amr Wael — Product designer, Cairo · {new Date().getFullYear()}
+          Amr Wael — Product builder, Cairo · {new Date().getFullYear()}
         </p>
       </footer>
     </>

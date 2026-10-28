@@ -65,7 +65,7 @@ export const siteDomain = siteOrigin.slice("https://".length);
 
 export const site = {
   name: "Amr",
-  role: "Product Designer",
+  role: "Product Builder",
   fullName: "Amr Wael",
   location: "Cairo",
   /* Anchors are absolute so the header works from every route, not only the
@@ -93,7 +93,7 @@ export const site = {
   /** The file in `public/` is the October 2026 CV, built from facts Amr
       confirmed (source: outputs/cv-2026-10 beside this repo). */
   resume: {
-    href: "/Amr-Wael-Product-Designer-CV.pdf",
+    href: "/Amr-Wael-Product-Builder-CV.pdf",
     label: "Résumé (PDF)",
   },
 } as const;
@@ -111,13 +111,20 @@ export const site = {
  * portfolio gets discounted, but it is now four words inside the role line
  * rather than a clause at the end of a paragraph.
  */
+/*
+ * Positioning changed on 28 Oct 2026 (Amr: «I'm into build more than design
+ * now»). Mazboot is the evidence: one person took it from problem to a live,
+ * sold product in a month. Design stays the method; building is the job.
+ */
 export const hero = {
   /** Kept for the social card and any surface with room for the long form. */
   support:
-    "I work through the layers behind a problem — context, constraints, and product systems — to find the approach that holds, then make it clear and usable.",
-  role: "Product Designer · Cairo",
-  claim: "I design the decisions inside complex products.",
-  lead: "A live B2B product and self-directed AI concepts, designed around business goals.",
+    "I take a product from the problem to something live: the decisions, the design, the build with AI-assisted engineering, and the selling.",
+  role: "Product Builder · Cairo",
+  claim: "I design, build and ship products around the decisions people make.",
+  /** The hero heading, broken where it is written to break on wide screens. */
+  claimLines: ["I design, build and ship products", "around the decisions people make."],
+  lead: "Mazboot is live: I designed it, built it with AI-assisted engineering, and sell it myself.",
   /* The hero carries one action now, and the component names it directly.
      The old primary/secondary pair is gone with the second CTA: a hero that
      offers two destinations has not decided what it wants the visitor to do. */

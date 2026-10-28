@@ -50,7 +50,7 @@ describe("project cards", () => {
   });
 
   it("marks Mazboot as a live product at an early stage, not a concept", () => {
-    expect(cardBySlug("mazboot")?.status).toBe("Own product · Live · Early stage");
+    expect(cardBySlug("mazboot")?.status).toBe("Own product · Built solo · Live · Early stage");
   });
 
   it("makes no measured-outcome claims in the impact lines", () => {

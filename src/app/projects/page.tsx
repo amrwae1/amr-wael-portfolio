@@ -77,7 +77,7 @@ export default function Projects() {
       <footer className="shell border-t border-rule py-10">
         <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
           <p className="meta">
-            Amr Wael — Product designer, Cairo · {new Date().getFullYear()}
+            Amr Wael — Product builder, Cairo · {new Date().getFullYear()}
           </p>
           <Link
             href="/"
